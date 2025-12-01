@@ -8,6 +8,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Google Fonts: Press Start 2P for Retro Feel -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
@@ -101,6 +104,13 @@
             image-rendering: crisp-edges;
         }
 
+        /* Chart Container for responsiveness */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #000; }
@@ -188,28 +198,31 @@
                     </button>
                 </div>
 
-                <!-- Right: Stats & Details -->
+                <!-- Right: Stats & Details (DUAL VIEW: IMAGE + CHART) -->
                 <div class="md:w-1/2 bg-gray-900 border-2 border-zalando p-4 flex flex-col">
                     <div id="hero-display-name" class="font-arcade text-xl text-yellow-400 mb-2 border-b border-gray-700 pb-2">CHOOSE HERO</div>
                     
-                    <!-- BIG IMAGE PREVIEW (No more Chart.js) -->
-                    <div id="hero-image-container" class="flex justify-center items-center h-64 mb-4 border-2 border-gray-700 bg-black relative overflow-hidden">
-                        <!-- Grid Background Effect -->
-                        <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle, #333 1px, transparent 1px); background-size: 20px 20px;"></div>
-                        
-                        <!-- The Big Image -->
-                        <img id="hero-large-img" src="" alt="Hero Preview" class="h-full object-contain hidden pixelated z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
-                        
-                        <!-- Placeholder Text -->
-                        <div id="hero-placeholder-text" class="font-arcade text-gray-600 text-xs text-center p-4 z-10 animate-pulse">
-                            HOVER HERO<br>TO PREVIEW
+                    <!-- SPLIT CONTAINER -->
+                    <div class="flex flex-row h-40 mb-4 gap-2">
+                        <!-- Left: Big Image -->
+                        <div id="hero-image-container" class="w-1/2 border-2 border-gray-700 bg-black relative overflow-hidden flex justify-center items-center">
+                            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle, #333 1px, transparent 1px); background-size: 10px 10px;"></div>
+                            <img id="hero-large-img" src="" alt="Hero" class="h-full object-contain hidden pixelated z-10">
+                            <div id="hero-placeholder-text" class="font-arcade text-gray-600 text-[10px] text-center p-2 z-10 animate-pulse">
+                                HOVER HERO
+                            </div>
+                        </div>
+
+                        <!-- Right: Radar Chart -->
+                        <div class="w-1/2 chart-container relative border-2 border-gray-700 bg-black">
+                            <canvas id="heroRadarChart"></canvas>
                         </div>
                     </div>
 
                     <div class="flex-1 overflow-y-auto font-term text-lg leading-tight text-white">
                         <p id="hero-desc">Passa il mouse su un eroe per vedere i dettagli.</p>
                         <div id="hero-special" class="mt-4 text-white font-bold hidden">
-                            SPECIALITÀ: <span id="special-text" class="text-cyan-300"></span>
+                            GEM USE CASE: <span id="special-text" class="text-cyan-300"></span>
                         </div>
                     </div>
 
@@ -262,7 +275,10 @@
             
             <h2 class="font-arcade text-red-500 text-center text-xl md:text-3xl mb-8 glitch-text">⚠️ WARNING: NEW CHALLENGER ⚠️</h2>
             
-            <div class="text-8xl md:text-9xl mb-8 shake">👾</div>
+            <!-- BOSS IMAGE REPLACEMENT -->
+            <img src="monster.png" alt="Boss" class="w-48 h-48 md:w-64 md:h-64 object-contain mb-8 shake pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div class="text-8xl md:text-9xl mb-8 shake hidden">👾</div>
+
             <h3 class="font-arcade text-white text-lg mb-4">L'IMPREVISTO OPS</h3>
             
             <div class="font-term text-red-300 text-xl text-center max-w-md mb-8 space-y-2">
@@ -316,64 +332,120 @@
         // --- DATA ---
         const heroes = {
             warrior: {
-                name: "IL GUERRIERO",
-                role: "WRITING ASSISTANT",
+                name: "IL NEGOZIATORE",
+                role: "SUPPLIER RESOLUTION",
                 icon: "warrior.png", 
-                desc: "Colui che sconfigge la 'Pagina Bianca'. Scrive mail e report. Annienta pile di email arretrate con un solo colpo.",
+                desc: "Gestisce fornitori difficili e ticket incompleti. Scrive risposte diplomatiche, chiare e assertive, trasformando conflitti in soluzioni in pochi secondi.",
+                stats: [90, 20, 40, 30], // Exec, Tech, Std, Soft
                 color: "rgba(255, 206, 86, 0.6)",
-                monsterName: "IL LABIRINTO DELLA MAIL VUOTA",
-                monsterIcon: "📩",
-                move: "FIRST DRAFT SLASH",
-                log: "Il Guerriero usa First Draft Slash! La bozza è pronta in 3 secondi. Zally guadagna tempo prezioso!"
+                monsterName: "IL FORNITORE ARRABBIATO",
+                monsterIcon: "🤬",
+                move: "DIPLOMACY SHIELD",
+                log: "Il Guerriero analizza la richiesta confusa. Genera una risposta diplomatica ma ferma. Il fornitore ringrazia!"
             },
             valkyrie: {
-                name: "LA VALCHIRIA",
-                role: "PROCESS GUARD",
+                name: "LA CUSTODE",
+                role: "SOP ALIGNMENT",
                 icon: "valchiria.png", 
-                desc: "La custode delle regole. Ideale per i Process Captains. Il suo scudo protegge dalle procedure errate.",
+                desc: "L'alleata dei Process Captains. Utilizza una Gem condivisa per mantenere le SOP allineate e garantire che tutto il team segua la stessa 'Single Source of Truth'.",
+                stats: [50, 30, 100, 60],
                 color: "rgba(75, 192, 192, 0.6)",
-                monsterName: "LA TRAPPOLA DELLA PROCEDURA",
+                monsterName: "IL PROCESSO OBSOLETO",
                 monsterIcon: "🕸️",
-                move: "STANDARDIZE BEAM",
-                log: "La Valchiria illumina la via con Standardize Beam. Le regole diventano chiare. Il team è salvo!"
+                move: "ALIGNMENT BEAM",
+                log: "La Valchiria consulta la Knowledge Base condivisa. Trova la procedura aggiornata (V2.0). Il team è allineato!"
             },
             wizard: {
-                name: "IL MAGO",
-                role: "EXCEL MASTER",
+                name: "EXCEL COACH",
+                role: "SKILL BOOSTER",
                 icon: "wizard.png", 
-                desc: "Il maestro delle formule Excel. Lancia incantesimi VLOOKUP e pozioni AppScript. Dashboard cristalline.",
+                desc: "Non ti dà solo il risultato, ti insegna. Carica il tuo file Excel e lui ti spiega le formule, ti aiuta a leggere i dati e migliora le tue competenze tecniche.",
+                stats: [30, 100, 80, 20],
                 color: "rgba(153, 102, 255, 0.6)",
-                monsterName: "L'ASSALTO DEI DATI",
+                monsterName: "IL REPORT CONFUSO",
                 monsterIcon: "📊",
-                move: "FORMULA SHIELD",
-                log: "Il Mago lancia Formula Shield! Le celle si ordinano all'istante. CRITICAL HIT!"
+                move: "KNOWLEDGE TRANSFER",
+                log: "Il Mago analizza il file. Ti spiega la logica della Pivot e ti insegna una formula migliore. Skill Up completato!"
             },
             elf: {
-                name: "L'ELFO",
-                role: "CAREER COACH",
+                name: "IL MENTORE",
+                role: "ROLEPLAY COACH",
                 icon: "elf.png", 
-                desc: "Il coach per colloqui. Ti guida nella foresta dei feedback difficili. Aumenta il carisma di Zally +10.",
+                desc: "Devi affrontare un colloquio interno o dare un feedback difficile? L'Elfo simula la conversazione con te (Roleplay) per allenarti a trovare le parole giuste.",
+                stats: [40, 20, 50, 100],
                 color: "rgba(74, 222, 128, 0.6)",
-                monsterName: "IL MOSTRO DEL FEEDBACK",
+                monsterName: "IL BLOCCO DELL'ORATORE",
                 monsterIcon: "💬",
-                move: "EMPATHY ARROW",
-                log: "L'Elfo scocca una freccia di empatia. Il feedback è costruttivo e motivante. Level Up!"
+                move: "CONFIDENCE BOOST",
+                log: "L'Elfo simula la domanda più temuta. Ti suggerisce una risposta strutturata (metodo STAR). Sei pronto!"
             }
         };
 
         // --- STATE ---
         let currentHeroKey = null;
+        let radarChart = null;
         let bossUnlocked = true; 
         let scenariosPlayed = 0;
+
+        // --- CHART SETUP ---
+        function initChart() {
+            const ctx = document.getElementById('heroRadarChart').getContext('2d');
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Exec', 'Tech', 'Std', 'Soft'],
+                    datasets: [{
+                        label: 'Stats',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: 'rgba(255, 105, 0, 0.5)', 
+                        borderColor: '#FF6900',
+                        borderWidth: 1,
+                        pointRadius: 1,
+                        pointBackgroundColor: '#fff'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#333' },
+                            grid: { color: '#333' },
+                            pointLabels: {
+                                color: '#aaa',
+                                font: { family: "'Press Start 2P'", size: 8 }
+                            },
+                            ticks: { display: false, max: 100, min: 0 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    animation: { duration: 500 }
+                }
+            });
+        }
 
         // --- NAVIGATION LOGIC ---
         function showScreen(screenId) {
             document.querySelectorAll('main > div').forEach(div => div.classList.add('hidden'));
             document.getElementById(screenId).classList.remove('hidden');
+            
+            // Fix for Chart.js rendering when hidden
+            if (screenId === 'select-view') {
+                 setTimeout(() => {
+                    if(radarChart) {
+                        radarChart.resize();
+                        radarChart.update();
+                    }
+                 }, 100);
+            }
         }
 
         function startGame() {
             showScreen('select-view');
+            // Chart init moved here to ensure canvas is visible-ish
+            if (!radarChart) initChart();
         }
 
         function previewHero(heroKey) {
@@ -395,10 +467,17 @@
                 bigImg.classList.remove('hidden');
                 placeholder.classList.add('hidden');
             } else {
-                // Should not happen with current data, but fallback
                 bigImg.classList.add('hidden');
                 placeholder.classList.remove('hidden');
-                placeholder.innerText = hero.icon; // Show Emoji if image fails
+                placeholder.innerText = hero.icon; 
+            }
+
+            // UPDATE CHART
+            if(radarChart) {
+                radarChart.data.datasets[0].data = hero.stats;
+                radarChart.data.datasets[0].backgroundColor = hero.color;
+                radarChart.data.datasets[0].borderColor = hero.color.replace('0.6', '1');
+                radarChart.update();
             }
         }
 
@@ -434,14 +513,11 @@
             typeWriter(`Zally è nei guai! ${hero.monsterName} attacca!`, 'battle-log', () => {
                 // 2. Hero Enters (Delay)
                 setTimeout(() => {
-                    // HANDLE ICON TYPE (Emoji vs Image)
                     const iconEl = document.getElementById('battle-hero-icon');
                     if (hero.icon.includes('.')) {
-                        // It's an image file
                         iconEl.innerHTML = `<img src="${hero.icon}" class="w-20 h-20 md:w-24 md:h-24 object-contain mx-auto pixelated animate-bounce">`;
                         iconEl.className = "mb-2 flex justify-center";
                     } else {
-                        // It's an emoji
                         iconEl.innerText = hero.icon;
                         iconEl.className = "text-6xl mb-2 flex justify-center";
                     }
