@@ -165,27 +165,31 @@
             <div class="flex flex-col md:flex-row gap-6 flex-1">
                 <!-- Left: Hero Grid -->
                 <div class="md:w-1/2 grid grid-cols-2 gap-4 content-start">
-                    <!-- Hero 1: Warrior -->
+                    
+                    <!-- Hero 1: Warrior (IMAGE: warrior.png) -->
                     <button onclick="selectHero('warrior')" onmouseenter="previewHero('warrior')" class="hero-btn group border-4 border-gray-600 hover:border-yellow-400 p-4 bg-gray-900 focus:outline-none focus:border-yellow-400 transition-colors cursor-pointer">
-                        <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">⚔️</div>
+                        <img src="warrior.png" alt="Warrior" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <div class="text-4xl mb-2 text-center hidden">⚔️</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-yellow-400">WARRIOR</div>
                     </button>
-                    <!-- Hero 2: Valkyrie -->
+                    
+                    <!-- Hero 2: Valkyrie (IMAGE: valchiria.png) -->
                     <button onclick="selectHero('valkyrie')" onmouseenter="previewHero('valkyrie')" class="hero-btn group border-4 border-gray-600 hover:border-cyan-400 p-4 bg-gray-900 focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">🛡️</div>
+                        <img src="valchiria.png" alt="Valkyrie" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <div class="text-4xl mb-2 text-center hidden">🛡️</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-cyan-400">VALKYRIE</div>
                     </button>
-                    <!-- Hero 3: Wizard -->
+                    
+                    <!-- Hero 3: Wizard (IMAGE: wizard.png) -->
                     <button onclick="selectHero('wizard')" onmouseenter="previewHero('wizard')" class="hero-btn group border-4 border-gray-600 hover:border-purple-400 p-4 bg-gray-900 focus:outline-none focus:border-purple-400 transition-colors cursor-pointer">
-                        <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">🧙‍♂️</div>
+                        <img src="wizard.png" alt="Wizard" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <div class="text-4xl mb-2 text-center hidden">🧙‍♂️</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-purple-400">WIZARD</div>
                     </button>
                     
-                    <!-- Hero 4: Elf (UPDATED TO USE IMAGE) -->
+                    <!-- Hero 4: Elf (IMAGE: elf.png) -->
                     <button onclick="selectHero('elf')" onmouseenter="previewHero('elf')" class="hero-btn group border-4 border-gray-600 hover:border-green-400 p-4 bg-gray-900 focus:outline-none focus:border-green-400 transition-colors cursor-pointer">
-                        <!-- IMG TAG INSTEAD OF EMOJI -->
                         <img src="elf.png" alt="Elf" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <!-- Fallback Emoji if image fails -->
                         <div class="text-4xl mb-2 text-center hidden">🧝</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-green-400">ELF</div>
                     </button>
@@ -225,7 +229,8 @@
                 
                 <div class="flex items-center gap-8 mb-8">
                     <div class="text-center">
-                        <img src="zally-warrior.jpg" alt="Zally" class="w-24 h-24 md:w-32 md:h-32 object-contain animate-bounce pixelated mx-auto" onerror="this.src='https://ui-avatars.com/api/?name=Zally&background=FF6900&color=000&size=128&bold=true'"> 
+                        <!-- UPDATED: ZALLY AVATAR NOW USES .PNG -->
+                        <img src="zally-warrior.png" alt="Zally" class="w-24 h-24 md:w-32 md:h-32 object-contain animate-bounce pixelated mx-auto" onerror="this.src='https://ui-avatars.com/api/?name=Zally&background=FF6900&color=000&size=128&bold=true'"> 
                         <div class="font-arcade text-xs mt-2 text-white">ZALLY</div>
                     </div>
                     
@@ -316,7 +321,7 @@
             warrior: {
                 name: "IL GUERRIERO",
                 role: "WRITING ASSISTANT",
-                icon: "⚔️",
+                icon: "warrior.png", // Image file
                 desc: "Colui che sconfigge la 'Pagina Bianca'. Scrive mail e report. Annienta pile di email arretrate con un solo colpo.",
                 stats: [90, 20, 40, 30],
                 color: "rgba(255, 206, 86, 0.6)",
@@ -328,7 +333,7 @@
             valkyrie: {
                 name: "LA VALCHIRIA",
                 role: "PROCESS GUARD",
-                icon: "🛡️",
+                icon: "valchiria.png", // Image file
                 desc: "La custode delle regole. Ideale per i Process Captains. Il suo scudo protegge dalle procedure errate.",
                 stats: [50, 30, 100, 60],
                 color: "rgba(75, 192, 192, 0.6)",
@@ -340,7 +345,7 @@
             wizard: {
                 name: "IL MAGO",
                 role: "EXCEL MASTER",
-                icon: "🧙‍♂️",
+                icon: "wizard.png", // Image file
                 desc: "Il maestro delle formule Excel. Lancia incantesimi VLOOKUP e pozioni AppScript. Dashboard cristalline.",
                 stats: [30, 100, 80, 20],
                 color: "rgba(153, 102, 255, 0.6)",
@@ -352,7 +357,7 @@
             elf: {
                 name: "L'ELFO",
                 role: "CAREER COACH",
-                icon: "elf.png", // Updated to use filename instead of emoji
+                icon: "elf.png", // Image file
                 desc: "Il coach per colloqui. Ti guida nella foresta dei feedback difficili. Aumenta il carisma di Zally +10.",
                 stats: [40, 20, 50, 100],
                 color: "rgba(74, 222, 128, 0.6)",
