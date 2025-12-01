@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zally's Gem Quest - Arcade Edition</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts: Press Start 2P for Retro Feel -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+    <!-- Placeholder Comments -->
+    <!-- Chosen Palette: Retro Arcade Neon (Black background, Neon Green, Hot Pink, Cyan, Yellow) -->
+    <!-- Application Structure Plan: The app mimics an 80s Arcade Cabinet interface. 
+         1. Title Screen: Engages user to 'Start'.
+         2. Character Select: The main menu where users explore the 4 'Archetypes' (Warrior, Valkyrie, Wizard, Elf). 
+            - Interaction: Hovering/Clicking updates a central 'Stats Radar' (Chart.js) and description text.
+         3. Scenario Mode: Selecting a hero simulates a 'Battle' (work scenario) solving a specific problem (Excel, Email, etc.).
+         4. Boss Level (The Glitch): A narrative sequence where presets fail, forcing the user to unlock the 'Custom Class'.
+         5. CTA: The final screen encourages creating a custom Gem.
+         This structure gamifies the learning process, making abstract AI concepts concrete and fun. -->
+    <!-- Visualization & Content Choices:
+         - Radar Chart (Chart.js): Visualizes the abstract 'skills' of each Gem archetype (Execution, Tech, Empathy, Standards). Justification: Gamers understand stats; this makes the Gem's value proposition instantly readable.
+         - Typewriter Text: Used for scenarios to mimic RPG dialogue boxes.
+         - CSS Animations: Blink, Shake, Glitch effects to simulate the retro hardware and the 'Boss' encounter.
+         - Confirming NO SVG/Mermaid: All icons are Unicode or CSS shapes. Charts are Canvas. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        /* Retro Font Settings */
+        .font-arcade { font-family: 'Press Start 2P', cursive; }
+        .font-term { font-family: 'VT323', monospace; }
+
+        /* CRT Monitor Effects */
+        body {
+            background-color: #111;
+            color: #eee;
+            overflow-x: hidden;
+        }
+
+        .crt-container {
+            background: radial-gradient(circle, #2a2a2a 0%, #000 100%);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+            border: 20px solid #1a1a1a;
+            border-radius: 20px;
+        }
+
+        /* Scanlines */
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.2) 50%,
+                rgba(0,0,0,0.2)
+            );
+            background-size: 100% 4px;
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Text Effects */
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        .glitch-text {
+            animation: glitch 1s linear infinite;
+            color: red;
+            text-shadow: 2px 2px #00f;
+        }
+        @keyframes glitch {
+            2%, 64% { transform: translate(2px,0) skew(0deg); }
+            4%, 60% { transform: translate(-2px,0) skew(0deg); }
+            62% { transform: translate(0,0) skew(5deg); }
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Chart Container for responsiveness */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            margin: 0 auto;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #0f0; border: 1px solid #0f0; }
+    </style>
+</head>
+<body class="crt-container flex flex-col items-center justify-center p-4">
+
+    <!-- Scanline Overlay -->
+    <div class="scanlines"></div>
+
+    <!-- UI: Header / Marquee -->
+    <header class="w-full max-w-4xl flex justify-between items-end border-b-4 border-green-500 pb-4 mb-6 z-10 relative">
+        <div class="text-left">
+            <h2 class="font-arcade text-yellow-400 text-xs md:text-sm mb-1">SCORE: <span id="score">00000</span></h2>
+            <h1 class="font-arcade text-green-500 text-lg md:text-2xl tracking-tighter shadow-green-glow">ZALLY'S GEM QUEST</h1>
+        </div>
+        <div class="text-right">
+            <div class="font-arcade text-cyan-400 text-xs md:text-sm animate-pulse">CREDITS: FREE PLAY</div>
+        </div>
+    </header>
+
+    <!-- UI: Main Game Screen -->
+    <main id="game-screen" class="w-full max-w-4xl bg-black border-4 border-gray-700 p-4 md:p-8 relative z-10 min-h-[600px] flex flex-col shadow-2xl">
+        
+        <!-- STATE 1: START SCREEN -->
+        <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
+            <div class="text-6xl md:text-8xl mb-4">👾</div>
+            <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-purple-500">HEROES</span></h1>
+            <p class="font-term text-xl text-green-400 max-w-lg">
+                Zally è nei guai. I mostri dell'Operational Chaos stanno attaccando. Scegli il tuo Gem Hero per salvare la giornata.
+            </p>
+            <button onclick="startGame()" class="mt-8 px-8 py-4 bg-red-600 hover:bg-red-500 text-white font-arcade text-sm md:text-xl border-b-4 border-red-800 active:border-b-0 active:translate-y-1 transition-all blink">
+                INSERT COIN / START
+            </button>
+        </div>
+
+        <!-- STATE 2: CHARACTER SELECT -->
+        <div id="select-view" class="hidden flex-1 flex flex-col">
+            <h2 class="font-arcade text-center text-white mb-6 text-sm md:text-lg">SELECT YOUR HERO</h2>
+            
+            <div class="flex flex-col md:flex-row gap-6 flex-1">
+                <!-- Left: Hero Grid -->
+                <div class="md:w-1/2 grid grid-cols-2 gap-4 content-start">
+                    <!-- Hero 1: Warrior -->
+                    <button onclick="selectHero('warrior')" onmouseenter="previewHero('warrior')" class="hero-btn group border-4 border-gray-600 hover:border-yellow-400 p-4 bg-gray-900 focus:outline-none focus:border-yellow-400 transition-colors">
+                        <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">⚔️</div>
+                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-yellow-400">WARRIOR</div>
+                    </button>
+                    <!-- Hero 2: Valkyrie -->
+                    <button onclick="selectHero('valkyrie')" onmouseenter="previewHero('valkyrie')" class="hero-btn group border-4 border-gray-600 hover:border-cyan-400 p-4 bg-gray-900 focus:outline-none focus:border-cyan-400 transition-colors">
+                        <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">🛡️</div>
+                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-cyan-400">VALKYRIE</div>
+                    </button>
+                    <!-- Hero 3: Wizard -->
+                    <button onclick="selectHero('wizard')" onmouseenter="previewHero('wizard')" class="hero-btn group border-4 border-gray-600 hover:border-purple-400 p-4 bg-gray-900 focus:outline-none focus:border-purple-400 transition-colors">
+                        <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">🧙‍♂️</div>
+                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-purple-400">WIZARD</div>
+                    </button>
+                    <!-- Hero 4: Elf -->
+                    <button onclick="selectHero('elf')" onmouseenter="previewHero('elf')" class="hero-btn group border-4 border-gray-600 hover:border-green-400 p-4 bg-gray-900 focus:outline-none focus:border-green-400 transition-colors">
+                        <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">🧝</div>
+                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-green-400">ELF</div>
+                    </button>
+                    <!-- Locked 5th Slot -->
+                    <button id="slot-5" onclick="triggerBoss()" class="col-span-2 border-4 border-dashed border-gray-800 p-4 bg-black opacity-50 cursor-not-allowed">
+                        <div class="font-arcade text-xs text-center text-gray-600">LOCKED ???</div>
+                    </button>
+                </div>
+
+                <!-- Right: Stats & Details -->
+                <div class="md:w-1/2 bg-gray-900 border-2 border-green-900 p-4 flex flex-col">
+                    <div id="hero-display-name" class="font-arcade text-xl text-yellow-400 mb-2 border-b border-gray-700 pb-2">CHOOSE HERO</div>
+                    
+                    <!-- Stats Chart -->
+                    <div class="chart-container flex-shrink-0 mb-4">
+                        <canvas id="heroRadarChart"></canvas>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="flex-1 overflow-y-auto font-term text-lg leading-tight text-green-300">
+                        <p id="hero-desc">Passa il mouse su un eroe per vedere le statistiche.</p>
+                        <div id="hero-special" class="mt-4 text-white font-bold hidden">
+                            SPECIALITÀ: <span id="special-text" class="text-cyan-300"></span>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button id="select-btn" class="mt-4 w-full bg-gray-700 text-gray-500 font-arcade py-3 cursor-not-allowed" disabled>
+                        SELECT HERO
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATE 3: SCENARIO / BATTLE -->
+        <div id="battle-view" class="hidden flex-1 flex flex-col justify-between">
+            <!-- Scenario Visual -->
+            <div class="flex-1 bg-gray-900 border-b-4 border-white mb-4 relative overflow-hidden p-6 flex flex-col items-center justify-center">
+                <div class="absolute top-4 left-4 font-arcade text-red-500 text-xs blink">WARNING: ERROR DETECTED</div>
+                
+                <!-- Zally Avatar -->
+                <div class="flex items-center gap-8 mb-8">
+                    <div class="text-center">
+                        <!-- Zally Placeholder - Future external file here -->
+                        <div class="text-6xl animate-bounce">😨</div>
+                        <div class="font-arcade text-xs mt-2 text-white">ZALLY</div>
+                    </div>
+                    <div class="font-arcade text-xl text-red-500">VS</div>
+                    <div class="text-center">
+                        <div id="monster-icon" class="text-6xl">📄</div>
+                        <div id="monster-name" class="font-arcade text-xs mt-2 text-red-400">PAGINA BIANCA</div>
+                    </div>
+                </div>
+
+                <!-- Hero Action -->
+                <div id="hero-action-container" class="hidden text-center transform transition-all duration-500 scale-0">
+                    <div id="battle-hero-icon" class="text-8xl mb-2">⚔️</div>
+                    <div id="battle-move-name" class="font-arcade text-yellow-400 text-lg md:text-xl">DRAFT ISTANTANEO!</div>
+                </div>
+            </div>
+
+            <!-- Text Log -->
+            <div class="h-32 bg-blue-900 border-4 border-white p-4 font-term text-xl text-white overflow-hidden">
+                <p id="battle-log"></p>
+                <div id="battle-cursor" class="inline-block w-2 h-5 bg-white blink align-bottom"></div>
+            </div>
+
+            <button onclick="returnToSelect()" id="next-btn" class="hidden mt-4 self-end text-yellow-400 font-arcade text-xs blink hover:text-white">
+                CONTINUE ▶
+            </button>
+        </div>
+
+        <!-- STATE 4: BOSS BATTLE (GLITCH) -->
+        <div id="boss-view" class="hidden flex-1 flex flex-col items-center justify-center bg-black relative overflow-hidden">
+            <div class="absolute inset-0 bg-red-900 opacity-20 animate-pulse"></div>
+            
+            <h2 class="font-arcade text-red-500 text-center text-xl md:text-3xl mb-8 glitch-text">⚠️ WARNING: NEW CHALLENGER ⚠️</h2>
+            
+            <div class="text-8xl md:text-9xl mb-8 shake">👾</div>
+            <h3 class="font-arcade text-white text-lg mb-4">L'IMPREVISTO OPS</h3>
+            
+            <div class="font-term text-red-300 text-xl text-center max-w-md mb-8 space-y-2">
+                <p>Analisi Guerriero... <span class="text-red-600">K.O.</span></p>
+                <p>Analisi Valchiria... <span class="text-red-600">K.O.</span></p>
+                <p>Analisi Mago... <span class="text-red-600">K.O.</span></p>
+                <p>Analisi Elfo... <span class="text-red-600">K.O.</span></p>
+                <p class="blink mt-4">I PRESET NON FUNZIONANO!</p>
+            </div>
+
+            <button onclick="unlockCustom()" class="px-6 py-3 border-2 border-red-500 text-red-500 font-arcade hover:bg-red-900 hover:text-white transition-colors">
+                CERCA SOLUZIONE...
+            </button>
+        </div>
+
+        <!-- STATE 5: CUSTOM HERO (VICTORY) -->
+        <div id="custom-view" class="hidden flex-1 flex flex-col items-center justify-center text-center">
+            <div class="text-yellow-400 text-6xl mb-4 animate-spin-slow">✨</div>
+            <h1 class="font-arcade text-3xl md:text-4xl text-white mb-4">UNLOCK NEW HERO</h1>
+            
+            <div class="bg-gray-800 p-6 border-4 border-white max-w-lg mb-8">
+                <h3 class="font-arcade text-green-400 mb-2">CLASS: CUSTOM CREATOR</h3>
+                <p class="font-term text-xl text-gray-300 mb-4">
+                    Nessun Preset conosce il tuo lavoro come te.<br>
+                    Crea il tuo eroe. Addestralo sulle tue sfide uniche.<br>
+                    Bardo? Mercante? Paladino?<br>
+                    <span class="text-white font-bold">Le possibilità sono INFINITE.</span>
+                </p>
+            </div>
+
+            <!-- CTA -->
+            <a href="https://gemini.google.com/" target="_blank" class="block w-full max-w-md mx-auto">
+                <div class="bg-yellow-500 hover:bg-yellow-400 text-black font-arcade py-6 px-4 border-b-8 border-yellow-700 active:border-b-0 active:translate-y-2 transition-all shadow-lg text-lg md:text-xl blink">
+                    👉 INSERT COIN TO CREATE GEM
+                </div>
+            </a>
+            <p class="mt-4 font-term text-gray-500">Press to start your custom adventure</p>
+            
+            <button onclick="resetGame()" class="mt-12 text-xs font-arcade text-gray-600 hover:text-white">
+                RESET SYSTEM
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer Controller hint -->
+    <div class="mt-8 text-gray-600 font-arcade text-xs text-center">
+        ZALANDO OPERATIONS - ARCADE DIVISION 198X
+    </div>
+
+    <!-- Game Logic -->
+    <script>
+        // --- DATA ---
+        const heroes = {
+            warrior: {
+                name: "IL GUERRIERO",
+                role: "WRITING ASSISTANT",
+                icon: "⚔️",
+                desc: "Colui che sconfigge la 'Pagina Bianca'. Scrive mail e report. Annienta pile di email arretrate con un solo colpo.",
+                stats: [90, 20, 40, 30], // Exec, Tech, Std, Soft
+                color: "rgba(255, 206, 86, 0.6)", // Yellow
+                monsterName: "IL LABIRINTO DELLA MAIL VUOTA",
+                monsterIcon: "📩",
+                move: "FIRST DRAFT SLASH",
+                log: "Il Guerriero usa First Draft Slash! La bozza è pronta in 3 secondi. Zally guadagna tempo prezioso!"
+            },
+            valkyrie: {
+                name: "LA VALCHIRIA",
+                role: "PROCESS GUARD",
+                icon: "🛡️",
+                desc: "La custode delle regole. Ideale per i Process Captains. Il suo scudo protegge dalle procedure errate.",
+                stats: [50, 30, 100, 60],
+                color: "rgba(75, 192, 192, 0.6)", // Cyan
+                monsterName: "LA TRAPPOLA DELLA PROCEDURA",
+                monsterIcon: "🕸️",
+                move: "STANDARDIZE BEAM",
+                log: "La Valchiria illumina la via con Standardize Beam. Le regole diventano chiare. Il team è salvo!"
+            },
+            wizard: {
+                name: "IL MAGO",
+                role: "EXCEL MASTER",
+                icon: "🧙‍♂️",
+                desc: "Il maestro delle formule Excel. Lancia incantesimi VLOOKUP e pozioni AppScript. Dashboard cristalline.",
+                stats: [30, 100, 80, 20],
+                color: "rgba(153, 102, 255, 0.6)", // Purple
+                monsterName: "L'ASSALTO DEI DATI",
+                monsterIcon: "📊",
+                move: "FORMULA SHIELD",
+                log: "Il Mago lancia Formula Shield! Le celle si ordinano all'istante. CRITICAL HIT!"
+            },
+            elf: {
+                name: "L'ELFO",
+                role: "CAREER COACH",
+                icon: "🧝",
+                desc: "Il coach per colloqui. Ti guida nella foresta dei feedback difficili. Aumenta il carisma di Zally +10.",
+                stats: [40, 20, 50, 100],
+                color: "rgba(74, 222, 128, 0.6)", // Green
+                monsterName: "IL MOSTRO DEL FEEDBACK",
+                monsterIcon: "💬",
+                move: "EMPATHY ARROW",
+                log: "L'Elfo scocca una freccia di empatia. Il feedback è costruttivo e motivante. Level Up!"
+            }
+        };
+
+        // --- STATE ---
+        let currentHeroKey = null;
+        let radarChart = null;
+        let bossUnlocked = false;
+        let scenariosPlayed = 0;
+
+        // --- CHART SETUP ---
+        function initChart() {
+            const ctx = document.getElementById('heroRadarChart').getContext('2d');
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Esecuzione', 'Tech', 'Standard', 'Soft Skills'],
+                    datasets: [{
+                        label: 'Stats',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        borderColor: '#fff',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#fff'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#333' },
+                            grid: { color: '#333' },
+                            pointLabels: {
+                                color: '#0f0',
+                                font: { family: "'Press Start 2P'", size: 10 }
+                            },
+                            ticks: { display: false, max: 100, min: 0 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    animation: { duration: 500 }
+                }
+            });
+        }
+
+        // --- NAVIGATION LOGIC ---
+        function showScreen(screenId) {
+            document.querySelectorAll('main > div').forEach(div => div.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+            if (screenId === 'select-view') resizeChart();
+        }
+
+        function resizeChart() {
+            if (radarChart) radarChart.resize();
+        }
+
+        function startGame() {
+            showScreen('select-view');
+            if (!radarChart) initChart();
+        }
+
+        function previewHero(heroKey) {
+            const hero = heroes[heroKey];
+            if (!hero) return;
+
+            // Update Text
+            document.getElementById('hero-display-name').innerText = hero.name;
+            document.getElementById('hero-display-name').style.color = hero.color.replace('0.6', '1');
+            document.getElementById('hero-desc').innerText = hero.desc;
+            document.getElementById('hero-special').classList.remove('hidden');
+            document.getElementById('special-text').innerText = hero.role;
+
+            // Update Chart
+            radarChart.data.datasets[0].data = hero.stats;
+            radarChart.data.datasets[0].backgroundColor = hero.color;
+            radarChart.data.datasets[0].borderColor = hero.color.replace('0.6', '1');
+            radarChart.update();
+        }
+
+        function selectHero(heroKey) {
+            currentHeroKey = heroKey;
+            previewHero(heroKey); // Ensure viewed hero is selected
+            
+            // Enable Button
+            const btn = document.getElementById('select-btn');
+            btn.disabled = false;
+            btn.classList.remove('cursor-not-allowed', 'bg-gray-700', 'text-gray-500');
+            btn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-500', 'blink');
+            btn.innerText = "PLAY " + heroes[heroKey].name;
+            btn.onclick = () => runScenario(heroKey);
+        }
+
+        // --- SCENARIO LOGIC ---
+        function runScenario(heroKey) {
+            const hero = heroes[heroKey];
+            showScreen('battle-view');
+
+            // Reset Battle UI
+            document.getElementById('battle-log').innerText = "";
+            document.getElementById('monster-icon').innerText = hero.monsterIcon;
+            document.getElementById('monster-name').innerText = hero.monsterName;
+            document.getElementById('hero-action-container').classList.add('hidden');
+            document.getElementById('hero-action-container').classList.remove('scale-100');
+            document.getElementById('hero-action-container').classList.add('scale-0');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            // 1. Monster Appears
+            typeWriter(`Zally è nei guai! ${hero.monsterName} attacca!`, 'battle-log', () => {
+                // 2. Hero Enters (Delay)
+                setTimeout(() => {
+                    document.getElementById('battle-hero-icon').innerText = hero.icon;
+                    document.getElementById('battle-move-name').innerText = hero.move;
+                    document.getElementById('hero-action-container').classList.remove('hidden');
+                    
+                    // Pop in animation
+                    setTimeout(() => {
+                        document.getElementById('hero-action-container').classList.remove('scale-0');
+                        document.getElementById('hero-action-container').classList.add('scale-100');
+                    }, 100);
+
+                    // 3. Hero Attacks Text
+                    const actionText = `\nPLAYER ENTERED!\n${hero.log}`;
+                    typeWriter(actionText, 'battle-log', () => {
+                        scenariosPlayed++;
+                        checkBossUnlock();
+                        document.getElementById('next-btn').classList.remove('hidden');
+                    });
+
+                }, 1000);
+            });
+        }
+
+        function typeWriter(text, elementId, callback) {
+            const element = document.getElementById(elementId);
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 30); // Typing speed
+                } else if (callback) {
+                    callback();
+                }
+            }
+            type();
+        }
+
+        function returnToSelect() {
+            showScreen('select-view');
+            // Reset Select Button
+            const btn = document.getElementById('select-btn');
+            btn.disabled = true;
+            btn.classList.add('cursor-not-allowed', 'bg-gray-700', 'text-gray-500');
+            btn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-500', 'blink');
+            btn.innerText = "SELECT HERO";
+
+            if (bossUnlocked) {
+                const slot5 = document.getElementById('slot-5');
+                slot5.classList.remove('opacity-50', 'cursor-not-allowed');
+                slot5.classList.add('border-red-500', 'animate-pulse', 'cursor-pointer', 'bg-red-900');
+                slot5.innerHTML = '<div class="text-red-500 font-arcade text-xs text-center blink">BOSS<br>LEVEL</div>';
+                slot5.disabled = false;
+            }
+        }
+
+        function checkBossUnlock() {
+            // Unlock boss after playing at least 1 scenario (for demo purposes, usually 3)
+            if (scenariosPlayed >= 1 && !bossUnlocked) {
+                bossUnlocked = true;
+                // Update header score
+                document.getElementById('score').innerText = "05000";
+            }
+        }
+
+        function triggerBoss() {
+            showScreen('boss-view');
+        }
+
+        function unlockCustom() {
+            showScreen('custom-view');
+        }
+
+        function resetGame() {
+            location.reload();
+        }
+
+        // Init
+        // window.onload = startGame; // Start directly? No, wait for user.
+    </script>
+</body>
+</html>
