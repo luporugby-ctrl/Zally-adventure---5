@@ -14,21 +14,31 @@
     <!-- Google Fonts: Press Start 2P for Retro Feel -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
+    <!-- Configurazione Tailwind per Colore Zalando -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        zalando: {
+                            DEFAULT: '#FF6900', // Zalando Orange
+                            dark: '#D15600',
+                            light: '#FF8533'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <!-- Placeholder Comments -->
-    <!-- Chosen Palette: Retro Arcade Neon (Black background, Neon Green, Hot Pink, Cyan, Yellow) -->
-    <!-- Application Structure Plan: The app mimics an 80s Arcade Cabinet interface. 
-         1. Title Screen: Engages user to 'Start'.
-         2. Character Select: The main menu where users explore the 4 'Archetypes' (Warrior, Valkyrie, Wizard, Elf). 
-            - Interaction: Hovering/Clicking updates a central 'Stats Radar' (Chart.js) and description text.
-         3. Scenario Mode: Selecting a hero simulates a 'Battle' (work scenario) solving a specific problem (Excel, Email, etc.).
-         4. Boss Level (The Glitch): A narrative sequence where presets fail, forcing the user to unlock the 'Custom Class'.
-         5. CTA: The final screen encourages creating a custom Gem.
-         This structure gamifies the learning process, making abstract AI concepts concrete and fun. -->
-    <!-- Visualization & Content Choices:
-         - Radar Chart (Chart.js): Visualizes the abstract 'skills' of each Gem archetype (Execution, Tech, Empathy, Standards). Justification: Gamers understand stats; this makes the Gem's value proposition instantly readable.
-         - Typewriter Text: Used for scenarios to mimic RPG dialogue boxes.
-         - CSS Animations: Blink, Shake, Glitch effects to simulate the retro hardware and the 'Boss' encounter.
-         - Confirming NO SVG/Mermaid: All icons are Unicode or CSS shapes. Charts are Canvas. -->
+    <!-- Chosen Palette: Retro Arcade Neon + Zalando Orange (#FF6900) -->
+    <!-- Application Structure Plan: 
+         1. Start Screen: Includes clear "HOW TO PLAY" instructions.
+         2. Character Select: Uses standard neon colors.
+         3. Battle/Scenario: Uses Zally Avatar (external file).
+         4. Boss/Custom: Highlights the "Custom" solution.
+    -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
     <style>
@@ -91,6 +101,13 @@
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
+        /* Pixelated Image Rendering for Zally */
+        .pixelated {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
         /* Chart Container for responsiveness */
         .chart-container {
             position: relative;
@@ -103,7 +120,7 @@
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #0f0; border: 1px solid #0f0; }
+        ::-webkit-scrollbar-thumb { background: #FF6900; border: 1px solid #FF6900; }
     </style>
 </head>
 <body class="crt-container flex flex-col items-center justify-center p-4">
@@ -112,10 +129,10 @@
     <div class="scanlines"></div>
 
     <!-- UI: Header / Marquee -->
-    <header class="w-full max-w-4xl flex justify-between items-end border-b-4 border-green-500 pb-4 mb-6 z-10 relative">
+    <header class="w-full max-w-4xl flex justify-between items-end border-b-4 border-zalando pb-4 mb-6 z-10 relative">
         <div class="text-left">
             <h2 class="font-arcade text-yellow-400 text-xs md:text-sm mb-1">SCORE: <span id="score">00000</span></h2>
-            <h1 class="font-arcade text-green-500 text-lg md:text-2xl tracking-tighter shadow-green-glow">ZALLY'S GEM QUEST</h1>
+            <h1 class="font-arcade text-zalando text-lg md:text-2xl tracking-tighter shadow-orange-glow">ZALLY'S GEM QUEST</h1>
         </div>
         <div class="text-right">
             <div class="font-arcade text-cyan-400 text-xs md:text-sm animate-pulse">CREDITS: FREE PLAY</div>
@@ -125,14 +142,23 @@
     <!-- UI: Main Game Screen -->
     <main id="game-screen" class="w-full max-w-4xl bg-black border-4 border-gray-700 p-4 md:p-8 relative z-10 min-h-[600px] flex flex-col shadow-2xl">
         
-        <!-- STATE 1: START SCREEN -->
+        <!-- STATE 1: START SCREEN & INSTRUCTIONS -->
         <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
             <div class="text-6xl md:text-8xl mb-4">👾</div>
-            <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-purple-500">HEROES</span></h1>
-            <p class="font-term text-xl text-green-400 max-w-lg">
-                Zally è nei guai. I mostri dell'Operational Chaos stanno attaccando. Scegli il tuo Gem Hero per salvare la giornata.
-            </p>
-            <button onclick="startGame()" class="mt-8 px-8 py-4 bg-red-600 hover:bg-red-500 text-white font-arcade text-sm md:text-xl border-b-4 border-red-800 active:border-b-0 active:translate-y-1 transition-all blink">
+            <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-zalando">HEROES</span></h1>
+            
+            <!-- Instructions Box -->
+            <div class="bg-gray-900 border-2 border-zalando p-4 max-w-lg w-full text-left mx-auto shadow-lg">
+                <h3 class="font-arcade text-zalando text-sm mb-4 text-center border-b border-zalando pb-2">HOW TO PLAY</h3>
+                <ul class="font-term text-lg text-gray-300 space-y-2 list-none">
+                    <li><span class="text-yellow-400">1.</span> Scegli un Eroe (Gem) dai Preset.</li>
+                    <li><span class="text-yellow-400">2.</span> Guarda come risolve i problemi OPS.</li>
+                    <li><span class="text-yellow-400">3.</span> Sblocca il "Livello Boss".</li>
+                    <li><span class="text-yellow-400">4.</span> Crea la TUA Gem personalizzata!</li>
+                </ul>
+            </div>
+
+            <button onclick="startGame()" class="mt-8 px-8 py-4 bg-zalando hover:bg-zalando-light text-black font-arcade text-sm md:text-xl border-b-4 border-zalando-dark active:border-b-0 active:translate-y-1 transition-all blink font-bold">
                 INSERT COIN / START
             </button>
         </div>
@@ -171,7 +197,7 @@
                 </div>
 
                 <!-- Right: Stats & Details -->
-                <div class="md:w-1/2 bg-gray-900 border-2 border-green-900 p-4 flex flex-col">
+                <div class="md:w-1/2 bg-gray-900 border-2 border-zalando p-4 flex flex-col">
                     <div id="hero-display-name" class="font-arcade text-xl text-yellow-400 mb-2 border-b border-gray-700 pb-2">CHOOSE HERO</div>
                     
                     <!-- Stats Chart -->
@@ -180,7 +206,7 @@
                     </div>
 
                     <!-- Description -->
-                    <div class="flex-1 overflow-y-auto font-term text-lg leading-tight text-green-300">
+                    <div class="flex-1 overflow-y-auto font-term text-lg leading-tight text-white">
                         <p id="hero-desc">Passa il mouse su un eroe per vedere le statistiche.</p>
                         <div id="hero-special" class="mt-4 text-white font-bold hidden">
                             SPECIALITÀ: <span id="special-text" class="text-cyan-300"></span>
@@ -201,24 +227,27 @@
             <div class="flex-1 bg-gray-900 border-b-4 border-white mb-4 relative overflow-hidden p-6 flex flex-col items-center justify-center">
                 <div class="absolute top-4 left-4 font-arcade text-red-500 text-xs blink">WARNING: ERROR DETECTED</div>
                 
-                <!-- Zally Avatar -->
+                <!-- Zally Avatar & Monster -->
                 <div class="flex items-center gap-8 mb-8">
                     <div class="text-center">
-                        <!-- Zally Placeholder - Future external file here -->
-                        <div class="text-6xl animate-bounce">😨</div>
+                        <!-- ZALLY AVATAR IMAGE -->
+                        <!-- Sostituisci src con il percorso corretto se diverso -->
+                        <img src="zally_avatar.png" alt="Zally" class="w-24 h-24 md:w-32 md:h-32 object-contain animate-bounce pixelated mx-auto" onerror="this.src='https://ui-avatars.com/api/?name=Zally&background=FF6900&color=000&size=128&bold=true'"> 
                         <div class="font-arcade text-xs mt-2 text-white">ZALLY</div>
                     </div>
+                    
                     <div class="font-arcade text-xl text-red-500">VS</div>
+                    
                     <div class="text-center">
-                        <div id="monster-icon" class="text-6xl">📄</div>
+                        <div id="monster-icon" class="text-6xl md:text-8xl">📄</div>
                         <div id="monster-name" class="font-arcade text-xs mt-2 text-red-400">PAGINA BIANCA</div>
                     </div>
                 </div>
 
                 <!-- Hero Action -->
-                <div id="hero-action-container" class="hidden text-center transform transition-all duration-500 scale-0">
-                    <div id="battle-hero-icon" class="text-8xl mb-2">⚔️</div>
-                    <div id="battle-move-name" class="font-arcade text-yellow-400 text-lg md:text-xl">DRAFT ISTANTANEO!</div>
+                <div id="hero-action-container" class="hidden text-center transform transition-all duration-500 scale-0 absolute bottom-10 bg-black/80 p-4 border-2 border-zalando rounded">
+                    <div id="battle-hero-icon" class="text-6xl mb-2">⚔️</div>
+                    <div id="battle-move-name" class="font-arcade text-zalando text-lg md:text-xl">DRAFT ISTANTANEO!</div>
                 </div>
             </div>
 
@@ -257,10 +286,10 @@
 
         <!-- STATE 5: CUSTOM HERO (VICTORY) -->
         <div id="custom-view" class="hidden flex-1 flex flex-col items-center justify-center text-center">
-            <div class="text-yellow-400 text-6xl mb-4 animate-spin-slow">✨</div>
+            <div class="text-zalando text-6xl mb-4 animate-spin-slow">✨</div>
             <h1 class="font-arcade text-3xl md:text-4xl text-white mb-4">UNLOCK NEW HERO</h1>
             
-            <div class="bg-gray-800 p-6 border-4 border-white max-w-lg mb-8">
+            <div class="bg-gray-800 p-6 border-4 border-zalando max-w-lg mb-8">
                 <h3 class="font-arcade text-green-400 mb-2">CLASS: CUSTOM CREATOR</h3>
                 <p class="font-term text-xl text-gray-300 mb-4">
                     Nessun Preset conosce il tuo lavoro come te.<br>
@@ -272,7 +301,7 @@
 
             <!-- CTA -->
             <a href="https://gemini.google.com/" target="_blank" class="block w-full max-w-md mx-auto">
-                <div class="bg-yellow-500 hover:bg-yellow-400 text-black font-arcade py-6 px-4 border-b-8 border-yellow-700 active:border-b-0 active:translate-y-2 transition-all shadow-lg text-lg md:text-xl blink">
+                <div class="bg-zalando hover:bg-zalando-light text-black font-arcade py-6 px-4 border-b-8 border-zalando-dark active:border-b-0 active:translate-y-2 transition-all shadow-lg text-lg md:text-xl blink font-bold">
                     👉 INSERT COIN TO CREATE GEM
                 </div>
             </a>
@@ -360,8 +389,8 @@
                     datasets: [{
                         label: 'Stats',
                         data: [0, 0, 0, 0],
-                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        borderColor: '#fff',
+                        backgroundColor: 'rgba(255, 105, 0, 0.5)', // Zalando Orange with Opacity
+                        borderColor: '#FF6900', // Zalando Orange Solid
                         borderWidth: 2,
                         pointBackgroundColor: '#fff'
                     }]
@@ -373,7 +402,7 @@
                             angleLines: { color: '#333' },
                             grid: { color: '#333' },
                             pointLabels: {
-                                color: '#0f0',
+                                color: '#aaa',
                                 font: { family: "'Press Start 2P'", size: 10 }
                             },
                             ticks: { display: false, max: 100, min: 0 }
@@ -416,6 +445,7 @@
 
             // Update Chart
             radarChart.data.datasets[0].data = hero.stats;
+            // Use specific hero color for the chart to make it pop
             radarChart.data.datasets[0].backgroundColor = hero.color;
             radarChart.data.datasets[0].borderColor = hero.color.replace('0.6', '1');
             radarChart.update();
@@ -425,11 +455,11 @@
             currentHeroKey = heroKey;
             previewHero(heroKey); // Ensure viewed hero is selected
             
-            // Enable Button
+            // Enable Button with Zalando Orange
             const btn = document.getElementById('select-btn');
             btn.disabled = false;
             btn.classList.remove('cursor-not-allowed', 'bg-gray-700', 'text-gray-500');
-            btn.classList.add('bg-green-600', 'text-white', 'hover:bg-green-500', 'blink');
+            btn.classList.add('bg-zalando', 'text-black', 'hover:bg-zalando-light', 'blink');
             btn.innerText = "PLAY " + heroes[heroKey].name;
             btn.onclick = () => runScenario(heroKey);
         }
@@ -495,7 +525,7 @@
             const btn = document.getElementById('select-btn');
             btn.disabled = true;
             btn.classList.add('cursor-not-allowed', 'bg-gray-700', 'text-gray-500');
-            btn.classList.remove('bg-green-600', 'text-white', 'hover:bg-green-500', 'blink');
+            btn.classList.remove('bg-zalando', 'text-black', 'hover:bg-zalando-light', 'blink');
             btn.innerText = "SELECT HERO";
 
             if (bossUnlocked) {
@@ -508,7 +538,7 @@
         }
 
         function checkBossUnlock() {
-            // Unlock boss after playing at least 1 scenario (for demo purposes, usually 3)
+            // Unlock boss after playing at least 1 scenario
             if (scenariosPlayed >= 1 && !bossUnlocked) {
                 bossUnlocked = true;
                 // Update header score
@@ -527,9 +557,6 @@
         function resetGame() {
             location.reload();
         }
-
-        // Init
-        // window.onload = startGame; // Start directly? No, wait for user.
     </script>
 </body>
 </html>
