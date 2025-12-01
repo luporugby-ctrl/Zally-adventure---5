@@ -138,7 +138,10 @@
         
         <!-- STATE 1: START SCREEN & INSTRUCTIONS -->
         <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
-            <div class="text-6xl md:text-8xl mb-4">👾</div>
+            <!-- REPLACED ALIEN WITH ZALLY WARRIOR IMAGE -->
+            <img src="zally-warrior.png" alt="Zally" class="w-32 h-32 md:w-48 md:h-48 object-contain mb-4 pixelated animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div class="text-6xl md:text-8xl mb-4 hidden">👾</div>
+
             <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-zalando">HEROES</span></h1>
             
             <div class="bg-gray-900 border-2 border-zalando p-4 max-w-lg w-full text-left mx-auto shadow-lg">
