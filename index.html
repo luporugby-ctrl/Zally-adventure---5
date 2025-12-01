@@ -52,8 +52,7 @@
             border-radius: 20px;
         }
 
-        /* Scanlines - Z-Index modificato per stare SOTTO il contenuto interattivo se necessario, 
-           ma visivamente sopra lo sfondo */
+        /* Scanlines */
         .scanlines {
             background: linear-gradient(
                 to bottom,
@@ -65,11 +64,11 @@
             background-size: 100% 4px;
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            pointer-events: none; /* Cruciale: permette ai click di passare */
-            z-index: 10; /* Abbassato z-index per sicurezza */
+            pointer-events: none;
+            z-index: 10;
         }
 
-        /* UI Elements - Z-Index forzato sopra le scanlines per garantire il click */
+        /* UI Elements */
         .ui-layer {
             position: relative;
             z-index: 50;
@@ -98,7 +97,7 @@
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
 
-        /* Pixelated Image Rendering for Zally */
+        /* Pixelated Image Rendering */
         .pixelated {
             image-rendering: pixelated;
             image-rendering: -moz-crisp-edges;
@@ -122,7 +121,7 @@
 </head>
 <body class="crt-container flex flex-col items-center justify-center p-4">
 
-    <!-- Scanline Overlay (Sotto UI ora) -->
+    <!-- Scanline Overlay -->
     <div class="scanlines"></div>
 
     <!-- UI: Header / Marquee -->
@@ -144,7 +143,6 @@
             <div class="text-6xl md:text-8xl mb-4">👾</div>
             <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-zalando">HEROES</span></h1>
             
-            <!-- Instructions Box -->
             <div class="bg-gray-900 border-2 border-zalando p-4 max-w-lg w-full text-left mx-auto shadow-lg">
                 <h3 class="font-arcade text-zalando text-sm mb-4 text-center border-b border-zalando pb-2">HOW TO PLAY</h3>
                 <ul class="font-term text-lg text-gray-300 space-y-2 list-none">
@@ -182,13 +180,17 @@
                         <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">🧙‍♂️</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-purple-400">WIZARD</div>
                     </button>
-                    <!-- Hero 4: Elf -->
+                    
+                    <!-- Hero 4: Elf (UPDATED TO USE IMAGE) -->
                     <button onclick="selectHero('elf')" onmouseenter="previewHero('elf')" class="hero-btn group border-4 border-gray-600 hover:border-green-400 p-4 bg-gray-900 focus:outline-none focus:border-green-400 transition-colors cursor-pointer">
-                        <div class="text-4xl mb-2 text-center group-hover:scale-110 transition-transform">🧝</div>
+                        <!-- IMG TAG INSTEAD OF EMOJI -->
+                        <img src="elf.png" alt="Elf" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <!-- Fallback Emoji if image fails -->
+                        <div class="text-4xl mb-2 text-center hidden">🧝</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-green-400">ELF</div>
                     </button>
                     
-                    <!-- 5th Slot - BOSS LEVEL (ORA SEMPRE SBLOCCATO) -->
+                    <!-- 5th Slot - BOSS LEVEL -->
                     <button id="slot-5" onclick="triggerBoss()" class="col-span-2 border-4 border-red-500 bg-red-900 p-4 animate-pulse cursor-pointer hover:bg-red-800 transition-colors">
                         <div class="text-red-200 font-arcade text-xs text-center blink">⚠️ BOSS LEVEL ⚠️<br>(CLICK TO PLAY)</div>
                     </button>
@@ -198,12 +200,10 @@
                 <div class="md:w-1/2 bg-gray-900 border-2 border-zalando p-4 flex flex-col">
                     <div id="hero-display-name" class="font-arcade text-xl text-yellow-400 mb-2 border-b border-gray-700 pb-2">CHOOSE HERO</div>
                     
-                    <!-- Stats Chart -->
                     <div class="chart-container flex-shrink-0 mb-4">
                         <canvas id="heroRadarChart"></canvas>
                     </div>
 
-                    <!-- Description -->
                     <div class="flex-1 overflow-y-auto font-term text-lg leading-tight text-white">
                         <p id="hero-desc">Passa il mouse su un eroe per vedere le statistiche.</p>
                         <div id="hero-special" class="mt-4 text-white font-bold hidden">
@@ -211,7 +211,6 @@
                         </div>
                     </div>
 
-                    <!-- Action Button -->
                     <button id="select-btn" class="mt-4 w-full bg-gray-700 text-gray-500 font-arcade py-3 cursor-not-allowed" disabled>
                         SELECT HERO ABOVE
                     </button>
@@ -221,15 +220,11 @@
 
         <!-- STATE 3: SCENARIO / BATTLE -->
         <div id="battle-view" class="hidden flex-1 flex flex-col justify-between">
-            <!-- Scenario Visual -->
             <div class="flex-1 bg-gray-900 border-b-4 border-white mb-4 relative overflow-hidden p-6 flex flex-col items-center justify-center">
                 <div class="absolute top-4 left-4 font-arcade text-red-500 text-xs blink">WARNING: ERROR DETECTED</div>
                 
-                <!-- Zally Avatar & Monster -->
                 <div class="flex items-center gap-8 mb-8">
                     <div class="text-center">
-                        <!-- ZALLY AVATAR IMAGE -->
-                        <!-- UPDATE: Updated filename to 'zally-warrior.jpg' -->
                         <img src="zally-warrior.jpg" alt="Zally" class="w-24 h-24 md:w-32 md:h-32 object-contain animate-bounce pixelated mx-auto" onerror="this.src='https://ui-avatars.com/api/?name=Zally&background=FF6900&color=000&size=128&bold=true'"> 
                         <div class="font-arcade text-xs mt-2 text-white">ZALLY</div>
                     </div>
@@ -242,14 +237,13 @@
                     </div>
                 </div>
 
-                <!-- Hero Action -->
                 <div id="hero-action-container" class="hidden text-center transform transition-all duration-500 scale-0 absolute bottom-10 bg-black/80 p-4 border-2 border-zalando rounded">
-                    <div id="battle-hero-icon" class="text-6xl mb-2">⚔️</div>
+                    <!-- Dynamic Icon Container -->
+                    <div id="battle-hero-icon" class="mb-2 flex justify-center"></div>
                     <div id="battle-move-name" class="font-arcade text-zalando text-lg md:text-xl">DRAFT ISTANTANEO!</div>
                 </div>
             </div>
 
-            <!-- Text Log -->
             <div class="h-32 bg-blue-900 border-4 border-white p-4 font-term text-xl text-white overflow-hidden">
                 <p id="battle-log"></p>
                 <div id="battle-cursor" class="inline-block w-2 h-5 bg-white blink align-bottom"></div>
@@ -297,7 +291,6 @@
                 </p>
             </div>
 
-            <!-- CTA -->
             <a href="https://gemini.google.com/" target="_blank" class="block w-full max-w-md mx-auto relative z-50">
                 <div class="bg-zalando hover:bg-zalando-light text-black font-arcade py-6 px-4 border-b-8 border-zalando-dark active:border-b-0 active:translate-y-2 transition-all shadow-lg text-lg md:text-xl blink font-bold">
                     👉 INSERT COIN TO CREATE GEM
@@ -312,7 +305,6 @@
 
     </main>
 
-    <!-- Footer Controller hint -->
     <div class="mt-8 text-gray-600 font-arcade text-xs text-center">
         ZALANDO OPERATIONS - ARCADE DIVISION 198X
     </div>
@@ -326,8 +318,8 @@
                 role: "WRITING ASSISTANT",
                 icon: "⚔️",
                 desc: "Colui che sconfigge la 'Pagina Bianca'. Scrive mail e report. Annienta pile di email arretrate con un solo colpo.",
-                stats: [90, 20, 40, 30], // Exec, Tech, Std, Soft
-                color: "rgba(255, 206, 86, 0.6)", // Yellow
+                stats: [90, 20, 40, 30],
+                color: "rgba(255, 206, 86, 0.6)",
                 monsterName: "IL LABIRINTO DELLA MAIL VUOTA",
                 monsterIcon: "📩",
                 move: "FIRST DRAFT SLASH",
@@ -339,7 +331,7 @@
                 icon: "🛡️",
                 desc: "La custode delle regole. Ideale per i Process Captains. Il suo scudo protegge dalle procedure errate.",
                 stats: [50, 30, 100, 60],
-                color: "rgba(75, 192, 192, 0.6)", // Cyan
+                color: "rgba(75, 192, 192, 0.6)",
                 monsterName: "LA TRAPPOLA DELLA PROCEDURA",
                 monsterIcon: "🕸️",
                 move: "STANDARDIZE BEAM",
@@ -351,7 +343,7 @@
                 icon: "🧙‍♂️",
                 desc: "Il maestro delle formule Excel. Lancia incantesimi VLOOKUP e pozioni AppScript. Dashboard cristalline.",
                 stats: [30, 100, 80, 20],
-                color: "rgba(153, 102, 255, 0.6)", // Purple
+                color: "rgba(153, 102, 255, 0.6)",
                 monsterName: "L'ASSALTO DEI DATI",
                 monsterIcon: "📊",
                 move: "FORMULA SHIELD",
@@ -360,10 +352,10 @@
             elf: {
                 name: "L'ELFO",
                 role: "CAREER COACH",
-                icon: "🧝",
+                icon: "elf.png", // Updated to use filename instead of emoji
                 desc: "Il coach per colloqui. Ti guida nella foresta dei feedback difficili. Aumenta il carisma di Zally +10.",
                 stats: [40, 20, 50, 100],
-                color: "rgba(74, 222, 128, 0.6)", // Green
+                color: "rgba(74, 222, 128, 0.6)",
                 monsterName: "IL MOSTRO DEL FEEDBACK",
                 monsterIcon: "💬",
                 move: "EMPATHY ARROW",
@@ -374,7 +366,6 @@
         // --- STATE ---
         let currentHeroKey = null;
         let radarChart = null;
-        // CHANGE: Boss is unlocked by default for easier demo
         let bossUnlocked = true; 
         let scenariosPlayed = 0;
 
@@ -388,8 +379,8 @@
                     datasets: [{
                         label: 'Stats',
                         data: [0, 0, 0, 0],
-                        backgroundColor: 'rgba(255, 105, 0, 0.5)', // Zalando Orange with Opacity
-                        borderColor: '#FF6900', // Zalando Orange Solid
+                        backgroundColor: 'rgba(255, 105, 0, 0.5)', 
+                        borderColor: '#FF6900',
                         borderWidth: 2,
                         pointBackgroundColor: '#fff'
                     }]
@@ -435,16 +426,13 @@
             const hero = heroes[heroKey];
             if (!hero) return;
 
-            // Update Text
             document.getElementById('hero-display-name').innerText = hero.name;
             document.getElementById('hero-display-name').style.color = hero.color.replace('0.6', '1');
             document.getElementById('hero-desc').innerText = hero.desc;
             document.getElementById('hero-special').classList.remove('hidden');
             document.getElementById('special-text').innerText = hero.role;
 
-            // Update Chart
             radarChart.data.datasets[0].data = hero.stats;
-            // Use specific hero color for the chart to make it pop
             radarChart.data.datasets[0].backgroundColor = hero.color;
             radarChart.data.datasets[0].borderColor = hero.color.replace('0.6', '1');
             radarChart.update();
@@ -452,9 +440,8 @@
 
         function selectHero(heroKey) {
             currentHeroKey = heroKey;
-            previewHero(heroKey); // Ensure viewed hero is selected
+            previewHero(heroKey); 
             
-            // Enable Button with Zalando Orange
             const btn = document.getElementById('select-btn');
             btn.disabled = false;
             btn.classList.remove('cursor-not-allowed', 'bg-gray-700', 'text-gray-500');
@@ -468,34 +455,45 @@
             const hero = heroes[heroKey];
             showScreen('battle-view');
 
-            // Reset Battle UI
             document.getElementById('battle-log').innerText = "";
             document.getElementById('monster-icon').innerText = hero.monsterIcon;
             document.getElementById('monster-name').innerText = hero.monsterName;
-            document.getElementById('hero-action-container').classList.add('hidden');
-            document.getElementById('hero-action-container').classList.remove('scale-100');
-            document.getElementById('hero-action-container').classList.add('scale-0');
+            
+            const actionContainer = document.getElementById('hero-action-container');
+            actionContainer.classList.add('hidden');
+            actionContainer.classList.remove('scale-100');
+            actionContainer.classList.add('scale-0');
+            
             document.getElementById('next-btn').classList.add('hidden');
 
             // 1. Monster Appears
             typeWriter(`Zally è nei guai! ${hero.monsterName} attacca!`, 'battle-log', () => {
                 // 2. Hero Enters (Delay)
                 setTimeout(() => {
-                    document.getElementById('battle-hero-icon').innerText = hero.icon;
+                    // HANDLE ICON TYPE (Emoji vs Image)
+                    const iconEl = document.getElementById('battle-hero-icon');
+                    if (hero.icon.includes('.')) {
+                        // It's an image file
+                        iconEl.innerHTML = `<img src="${hero.icon}" class="w-20 h-20 md:w-24 md:h-24 object-contain mx-auto pixelated animate-bounce">`;
+                        iconEl.className = "mb-2 flex justify-center";
+                    } else {
+                        // It's an emoji
+                        iconEl.innerText = hero.icon;
+                        iconEl.className = "text-6xl mb-2 flex justify-center";
+                    }
+
                     document.getElementById('battle-move-name').innerText = hero.move;
-                    document.getElementById('hero-action-container').classList.remove('hidden');
+                    actionContainer.classList.remove('hidden');
                     
-                    // Pop in animation
                     setTimeout(() => {
-                        document.getElementById('hero-action-container').classList.remove('scale-0');
-                        document.getElementById('hero-action-container').classList.add('scale-100');
+                        actionContainer.classList.remove('scale-0');
+                        actionContainer.classList.add('scale-100');
                     }, 100);
 
                     // 3. Hero Attacks Text
                     const actionText = `\nPLAYER ENTERED!\n${hero.log}`;
                     typeWriter(actionText, 'battle-log', () => {
                         scenariosPlayed++;
-                        // Boss is already unlocked, but we keep this for score logic
                         checkBossUnlock();
                         document.getElementById('next-btn').classList.remove('hidden');
                     });
@@ -511,7 +509,7 @@
                 if (i < text.length) {
                     element.innerHTML += text.charAt(i);
                     i++;
-                    setTimeout(type, 30); // Typing speed
+                    setTimeout(type, 30);
                 } else if (callback) {
                     callback();
                 }
@@ -521,20 +519,15 @@
 
         function returnToSelect() {
             showScreen('select-view');
-            // Reset Select Button
             const btn = document.getElementById('select-btn');
             btn.disabled = true;
             btn.classList.add('cursor-not-allowed', 'bg-gray-700', 'text-gray-500');
             btn.classList.remove('bg-zalando', 'text-black', 'hover:bg-zalando-light', 'blink');
             btn.innerText = "SELECT HERO ABOVE";
-
-            // Boss slot is always visible/clickable now
         }
 
         function checkBossUnlock() {
-            // Unlock boss after playing at least 1 scenario
             if (scenariosPlayed >= 1) {
-                // Update header score
                 document.getElementById('score').innerText = "15000";
             }
         }
