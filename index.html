@@ -8,9 +8,6 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <!-- Google Fonts: Press Start 2P for Retro Feel -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
@@ -104,15 +101,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* Chart Container for responsiveness */
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 300px;
-            margin: 0 auto;
-        }
-
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #000; }
@@ -204,12 +192,22 @@
                 <div class="md:w-1/2 bg-gray-900 border-2 border-zalando p-4 flex flex-col">
                     <div id="hero-display-name" class="font-arcade text-xl text-yellow-400 mb-2 border-b border-gray-700 pb-2">CHOOSE HERO</div>
                     
-                    <div class="chart-container flex-shrink-0 mb-4">
-                        <canvas id="heroRadarChart"></canvas>
+                    <!-- BIG IMAGE PREVIEW (No more Chart.js) -->
+                    <div id="hero-image-container" class="flex justify-center items-center h-64 mb-4 border-2 border-gray-700 bg-black relative overflow-hidden">
+                        <!-- Grid Background Effect -->
+                        <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle, #333 1px, transparent 1px); background-size: 20px 20px;"></div>
+                        
+                        <!-- The Big Image -->
+                        <img id="hero-large-img" src="" alt="Hero Preview" class="h-full object-contain hidden pixelated z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+                        
+                        <!-- Placeholder Text -->
+                        <div id="hero-placeholder-text" class="font-arcade text-gray-600 text-xs text-center p-4 z-10 animate-pulse">
+                            HOVER HERO<br>TO PREVIEW
+                        </div>
                     </div>
 
                     <div class="flex-1 overflow-y-auto font-term text-lg leading-tight text-white">
-                        <p id="hero-desc">Passa il mouse su un eroe per vedere le statistiche.</p>
+                        <p id="hero-desc">Passa il mouse su un eroe per vedere i dettagli.</p>
                         <div id="hero-special" class="mt-4 text-white font-bold hidden">
                             SPECIALITÀ: <span id="special-text" class="text-cyan-300"></span>
                         </div>
@@ -229,7 +227,6 @@
                 
                 <div class="flex items-center gap-8 mb-8">
                     <div class="text-center">
-                        <!-- UPDATED: ZALLY AVATAR NOW USES .PNG -->
                         <img src="zally-warrior.png" alt="Zally" class="w-24 h-24 md:w-32 md:h-32 object-contain animate-bounce pixelated mx-auto" onerror="this.src='https://ui-avatars.com/api/?name=Zally&background=FF6900&color=000&size=128&bold=true'"> 
                         <div class="font-arcade text-xs mt-2 text-white">ZALLY</div>
                     </div>
@@ -321,9 +318,8 @@
             warrior: {
                 name: "IL GUERRIERO",
                 role: "WRITING ASSISTANT",
-                icon: "warrior.png", // Image file
+                icon: "warrior.png", 
                 desc: "Colui che sconfigge la 'Pagina Bianca'. Scrive mail e report. Annienta pile di email arretrate con un solo colpo.",
-                stats: [90, 20, 40, 30],
                 color: "rgba(255, 206, 86, 0.6)",
                 monsterName: "IL LABIRINTO DELLA MAIL VUOTA",
                 monsterIcon: "📩",
@@ -333,9 +329,8 @@
             valkyrie: {
                 name: "LA VALCHIRIA",
                 role: "PROCESS GUARD",
-                icon: "valchiria.png", // Image file
+                icon: "valchiria.png", 
                 desc: "La custode delle regole. Ideale per i Process Captains. Il suo scudo protegge dalle procedure errate.",
-                stats: [50, 30, 100, 60],
                 color: "rgba(75, 192, 192, 0.6)",
                 monsterName: "LA TRAPPOLA DELLA PROCEDURA",
                 monsterIcon: "🕸️",
@@ -345,9 +340,8 @@
             wizard: {
                 name: "IL MAGO",
                 role: "EXCEL MASTER",
-                icon: "wizard.png", // Image file
+                icon: "wizard.png", 
                 desc: "Il maestro delle formule Excel. Lancia incantesimi VLOOKUP e pozioni AppScript. Dashboard cristalline.",
-                stats: [30, 100, 80, 20],
                 color: "rgba(153, 102, 255, 0.6)",
                 monsterName: "L'ASSALTO DEI DATI",
                 monsterIcon: "📊",
@@ -357,9 +351,8 @@
             elf: {
                 name: "L'ELFO",
                 role: "CAREER COACH",
-                icon: "elf.png", // Image file
+                icon: "elf.png", 
                 desc: "Il coach per colloqui. Ti guida nella foresta dei feedback difficili. Aumenta il carisma di Zally +10.",
-                stats: [40, 20, 50, 100],
                 color: "rgba(74, 222, 128, 0.6)",
                 monsterName: "IL MOSTRO DEL FEEDBACK",
                 monsterIcon: "💬",
@@ -370,61 +363,17 @@
 
         // --- STATE ---
         let currentHeroKey = null;
-        let radarChart = null;
         let bossUnlocked = true; 
         let scenariosPlayed = 0;
-
-        // --- CHART SETUP ---
-        function initChart() {
-            const ctx = document.getElementById('heroRadarChart').getContext('2d');
-            radarChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Esecuzione', 'Tech', 'Standard', 'Soft Skills'],
-                    datasets: [{
-                        label: 'Stats',
-                        data: [0, 0, 0, 0],
-                        backgroundColor: 'rgba(255, 105, 0, 0.5)', 
-                        borderColor: '#FF6900',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#fff'
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: '#333' },
-                            grid: { color: '#333' },
-                            pointLabels: {
-                                color: '#aaa',
-                                font: { family: "'Press Start 2P'", size: 10 }
-                            },
-                            ticks: { display: false, max: 100, min: 0 }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    animation: { duration: 500 }
-                }
-            });
-        }
 
         // --- NAVIGATION LOGIC ---
         function showScreen(screenId) {
             document.querySelectorAll('main > div').forEach(div => div.classList.add('hidden'));
             document.getElementById(screenId).classList.remove('hidden');
-            if (screenId === 'select-view') resizeChart();
-        }
-
-        function resizeChart() {
-            if (radarChart) radarChart.resize();
         }
 
         function startGame() {
             showScreen('select-view');
-            if (!radarChart) initChart();
         }
 
         function previewHero(heroKey) {
@@ -437,10 +386,20 @@
             document.getElementById('hero-special').classList.remove('hidden');
             document.getElementById('special-text').innerText = hero.role;
 
-            radarChart.data.datasets[0].data = hero.stats;
-            radarChart.data.datasets[0].backgroundColor = hero.color;
-            radarChart.data.datasets[0].borderColor = hero.color.replace('0.6', '1');
-            radarChart.update();
+            // UPDATE BIG IMAGE
+            const bigImg = document.getElementById('hero-large-img');
+            const placeholder = document.getElementById('hero-placeholder-text');
+
+            if (hero.icon.includes('.')) {
+                bigImg.src = hero.icon;
+                bigImg.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else {
+                // Should not happen with current data, but fallback
+                bigImg.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+                placeholder.innerText = hero.icon; // Show Emoji if image fails
+            }
         }
 
         function selectHero(heroKey) {
