@@ -167,28 +167,28 @@
                 <!-- Left: Hero Grid -->
                 <div class="md:w-1/2 grid grid-cols-2 gap-4 content-start">
                     
-                    <!-- Hero 1: Warrior (IMAGE: warrior.png) -->
+                    <!-- Hero 1: Warrior (THE EXECUTOR) -->
                     <button onclick="selectHero('warrior')" onmouseenter="previewHero('warrior')" class="hero-btn group border-4 border-gray-600 hover:border-yellow-400 p-4 bg-gray-900 focus:outline-none focus:border-yellow-400 transition-colors cursor-pointer">
                         <img src="warrior.png" alt="Warrior" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                         <div class="text-4xl mb-2 text-center hidden">⚔️</div>
-                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-yellow-400">WARRIOR</div>
+                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-yellow-400">THE EXECUTOR</div>
                     </button>
                     
-                    <!-- Hero 2: Valkyrie (IMAGE: valchiria.png) -->
+                    <!-- Hero 2: Valkyrie -->
                     <button onclick="selectHero('valkyrie')" onmouseenter="previewHero('valkyrie')" class="hero-btn group border-4 border-gray-600 hover:border-cyan-400 p-4 bg-gray-900 focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
                         <img src="valchiria.png" alt="Valkyrie" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                         <div class="text-4xl mb-2 text-center hidden">🛡️</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-cyan-400">VALKYRIE</div>
                     </button>
                     
-                    <!-- Hero 3: Wizard (IMAGE: wizard.png) -->
+                    <!-- Hero 3: Wizard -->
                     <button onclick="selectHero('wizard')" onmouseenter="previewHero('wizard')" class="hero-btn group border-4 border-gray-600 hover:border-purple-400 p-4 bg-gray-900 focus:outline-none focus:border-purple-400 transition-colors cursor-pointer">
                         <img src="wizard.png" alt="Wizard" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                         <div class="text-4xl mb-2 text-center hidden">🧙‍♂️</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-purple-400">WIZARD</div>
                     </button>
                     
-                    <!-- Hero 4: Elf (IMAGE: elf.png) -->
+                    <!-- Hero 4: Elf -->
                     <button onclick="selectHero('elf')" onmouseenter="previewHero('elf')" class="hero-btn group border-4 border-gray-600 hover:border-green-400 p-4 bg-gray-900 focus:outline-none focus:border-green-400 transition-colors cursor-pointer">
                         <img src="elf.png" alt="Elf" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                         <div class="text-4xl mb-2 text-center hidden">🧝</div>
@@ -335,16 +335,16 @@
         // --- DATA ---
         const heroes = {
             warrior: {
-                name: "THE NEGOTIATOR",
-                role: "SUPPLIER RESOLUTION",
+                name: "THE EXECUTOR",
+                role: "TICKET RESOLUTION",
                 icon: "warrior.png", 
-                desc: "Handles tough suppliers and incomplete tickets. Writes diplomatic, clear, and assertive responses, turning conflicts into solutions in seconds.",
-                stats: [90, 20, 40, 30], // Exec, Tech, Std, Soft
+                desc: "Acts as an expert for your specific processes. Upload a Jira ticket screenshot and your SOPs to get an exact step-by-step resolution.",
+                stats: [90, 40, 80, 20], // High Exec, High Std
                 color: "rgba(255, 206, 86, 0.6)",
-                monsterName: "THE ANGRY SUPPLIER",
-                monsterIcon: "🤬",
-                move: "DIPLOMACY SHIELD",
-                log: "The Warrior analyzes the confused request. Generates a diplomatic but firm response. The supplier says thanks!"
+                monsterName: "THE BLOCKED TICKET",
+                monsterIcon: "🎫",
+                move: "SOP STRIKE",
+                log: "The Executor analyzes the ticket image. Cross-references with the Process SOP. Output: 'Escalate to Level 2'. Problem solved!"
             },
             valkyrie: {
                 name: "THE KEEPER",
