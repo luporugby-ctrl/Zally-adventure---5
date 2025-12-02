@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,7 @@
     <!-- Google Fonts: Press Start 2P for Retro Feel -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
-    <!-- Configurazione Tailwind per Colore Zalando -->
+    <!-- Tailwind Config for Zalando Colors -->
     <script>
         tailwind.config = {
             theme: {
@@ -138,7 +138,7 @@
         
         <!-- STATE 1: START SCREEN & INSTRUCTIONS -->
         <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
-            <!-- REPLACED ALIEN WITH ZALLY WARRIOR IMAGE -->
+            <!-- ZALLY WARRIOR IMAGE -->
             <img src="zally-warrior.png" alt="Zally" class="w-32 h-32 md:w-48 md:h-48 object-contain mb-4 pixelated animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
             <div class="text-6xl md:text-8xl mb-4 hidden">👾</div>
 
@@ -147,10 +147,10 @@
             <div class="bg-gray-900 border-2 border-zalando p-4 max-w-lg w-full text-left mx-auto shadow-lg">
                 <h3 class="font-arcade text-zalando text-sm mb-4 text-center border-b border-zalando pb-2">HOW TO PLAY</h3>
                 <ul class="font-term text-lg text-gray-300 space-y-2 list-none">
-                    <li><span class="text-yellow-400">1.</span> Clicca START per iniziare.</li>
-                    <li><span class="text-yellow-400">2.</span> Seleziona una Gem o il <span class="text-red-500 blink">BOSS LEVEL</span>.</li>
-                    <li><span class="text-yellow-400">3.</span> Scopri come l'AI risolve i problemi.</li>
-                    <li><span class="text-yellow-400">4.</span> Crea la TUA Gem personalizzata!</li>
+                    <li><span class="text-yellow-400">1.</span> Click START to begin.</li>
+                    <li><span class="text-yellow-400">2.</span> Select a Gem or the <span class="text-red-500 blink">BOSS LEVEL</span>.</li>
+                    <li><span class="text-yellow-400">3.</span> See how AI solves problems.</li>
+                    <li><span class="text-yellow-400">4.</span> Create YOUR custom Gem!</li>
                 </ul>
             </div>
 
@@ -223,7 +223,7 @@
                     </div>
 
                     <div class="flex-1 overflow-y-auto font-term text-lg leading-tight text-white">
-                        <p id="hero-desc">Passa il mouse su un eroe per vedere i dettagli.</p>
+                        <p id="hero-desc">Hover over a hero to see details.</p>
                         <div id="hero-special" class="mt-4 text-white font-bold hidden">
                             GEM USE CASE: <span id="special-text" class="text-cyan-300"></span>
                         </div>
@@ -251,14 +251,14 @@
                     
                     <div class="text-center">
                         <div id="monster-icon" class="text-6xl md:text-8xl">📄</div>
-                        <div id="monster-name" class="font-arcade text-xs mt-2 text-red-400">PAGINA BIANCA</div>
+                        <div id="monster-name" class="font-arcade text-xs mt-2 text-red-400">BLANK PAGE</div>
                     </div>
                 </div>
 
                 <div id="hero-action-container" class="hidden text-center transform transition-all duration-500 scale-0 absolute bottom-10 bg-black/80 p-4 border-2 border-zalando rounded">
                     <!-- Dynamic Icon Container -->
                     <div id="battle-hero-icon" class="mb-2 flex justify-center"></div>
-                    <div id="battle-move-name" class="font-arcade text-zalando text-lg md:text-xl">DRAFT ISTANTANEO!</div>
+                    <div id="battle-move-name" class="font-arcade text-zalando text-lg md:text-xl">INSTANT DRAFT!</div>
                 </div>
             </div>
 
@@ -282,18 +282,18 @@
             <img src="monster.png" alt="Boss" class="w-48 h-48 md:w-64 md:h-64 object-contain mb-8 shake pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
             <div class="text-8xl md:text-9xl mb-8 shake hidden">👾</div>
 
-            <h3 class="font-arcade text-white text-lg mb-4">L'IMPREVISTO OPS</h3>
+            <h3 class="font-arcade text-white text-lg mb-4">OPS UNFORESEEN</h3>
             
             <div class="font-term text-red-300 text-xl text-center max-w-md mb-8 space-y-2">
-                <p>Analisi Guerriero... <span class="text-red-600">K.O.</span></p>
-                <p>Analisi Valchiria... <span class="text-red-600">K.O.</span></p>
-                <p>Analisi Mago... <span class="text-red-600">K.O.</span></p>
-                <p>Analisi Elfo... <span class="text-red-600">K.O.</span></p>
-                <p class="blink mt-4">I PRESET NON FUNZIONANO!</p>
+                <p>Analyzing Warrior... <span class="text-red-600">K.O.</span></p>
+                <p>Analyzing Valkyrie... <span class="text-red-600">K.O.</span></p>
+                <p>Analyzing Wizard... <span class="text-red-600">K.O.</span></p>
+                <p>Analyzing Elf... <span class="text-red-600">K.O.</span></p>
+                <p class="blink mt-4">PRESETS FAILED!</p>
             </div>
 
             <button onclick="unlockCustom()" class="px-6 py-3 border-2 border-red-500 text-red-500 font-arcade hover:bg-red-900 hover:text-white transition-colors cursor-pointer z-50">
-                CERCA SOLUZIONE...
+                SEARCHING SOLUTION...
             </button>
         </div>
 
@@ -305,10 +305,10 @@
             <div class="bg-gray-800 p-6 border-4 border-zalando max-w-lg mb-8">
                 <h3 class="font-arcade text-green-400 mb-2">CLASS: CUSTOM CREATOR</h3>
                 <p class="font-term text-xl text-gray-300 mb-4">
-                    Nessun Preset conosce il tuo lavoro come te.<br>
-                    Crea il tuo eroe. Addestralo sulle tue sfide uniche.<br>
-                    Bardo? Mercante? Paladino?<br>
-                    <span class="text-white font-bold">Le possibilità sono INFINITE.</span>
+                    No Preset knows your work like you do.<br>
+                    Create your hero. Train them on your unique challenges.<br>
+                    Bard? Merchant? Paladin?<br>
+                    <span class="text-white font-bold">The possibilities are INFINITE.</span>
                 </p>
             </div>
 
@@ -335,52 +335,52 @@
         // --- DATA ---
         const heroes = {
             warrior: {
-                name: "IL NEGOZIATORE",
+                name: "THE NEGOTIATOR",
                 role: "SUPPLIER RESOLUTION",
                 icon: "warrior.png", 
-                desc: "Gestisce fornitori difficili e ticket incompleti. Scrive risposte diplomatiche, chiare e assertive, trasformando conflitti in soluzioni in pochi secondi.",
+                desc: "Handles tough suppliers and incomplete tickets. Writes diplomatic, clear, and assertive responses, turning conflicts into solutions in seconds.",
                 stats: [90, 20, 40, 30], // Exec, Tech, Std, Soft
                 color: "rgba(255, 206, 86, 0.6)",
-                monsterName: "IL FORNITORE ARRABBIATO",
+                monsterName: "THE ANGRY SUPPLIER",
                 monsterIcon: "🤬",
                 move: "DIPLOMACY SHIELD",
-                log: "Il Guerriero analizza la richiesta confusa. Genera una risposta diplomatica ma ferma. Il fornitore ringrazia!"
+                log: "The Warrior analyzes the confused request. Generates a diplomatic but firm response. The supplier says thanks!"
             },
             valkyrie: {
-                name: "LA CUSTODE",
+                name: "THE KEEPER",
                 role: "SOP ALIGNMENT",
                 icon: "valchiria.png", 
-                desc: "L'alleata dei Process Captains. Utilizza una Gem condivisa per mantenere le SOP allineate e garantire che tutto il team segua la stessa 'Single Source of Truth'.",
+                desc: "The Process Captains' ally. Uses a shared Gem to keep SOPs aligned and ensure the whole team follows the same 'Single Source of Truth'.",
                 stats: [50, 30, 100, 60],
                 color: "rgba(75, 192, 192, 0.6)",
-                monsterName: "IL PROCESSO OBSOLETO",
+                monsterName: "THE OBSOLETE PROCESS",
                 monsterIcon: "🕸️",
                 move: "ALIGNMENT BEAM",
-                log: "La Valchiria consulta la Knowledge Base condivisa. Trova la procedura aggiornata (V2.0). Il team è allineato!"
+                log: "The Valkyrie consults the shared Knowledge Base. Finds the updated procedure (V2.0). The team is aligned!"
             },
             wizard: {
                 name: "EXCEL COACH",
                 role: "SKILL BOOSTER",
                 icon: "wizard.png", 
-                desc: "Non ti dà solo il risultato, ti insegna. Carica il tuo file Excel e lui ti spiega le formule, ti aiuta a leggere i dati e migliora le tue competenze tecniche.",
+                desc: "Doesn't just give you the result, it teaches you. Upload your Excel file and it explains the formulas, helps you read the data, and boosts your tech skills.",
                 stats: [30, 100, 80, 20],
                 color: "rgba(153, 102, 255, 0.6)",
-                monsterName: "IL REPORT CONFUSO",
+                monsterName: "THE CONFUSING REPORT",
                 monsterIcon: "📊",
                 move: "KNOWLEDGE TRANSFER",
-                log: "Il Mago analizza il file. Ti spiega la logica della Pivot e ti insegna una formula migliore. Skill Up completato!"
+                log: "The Wizard analyzes the file. Explains the Pivot logic and teaches you a better formula. Skill Up complete!"
             },
             elf: {
-                name: "IL MENTORE",
+                name: "THE MENTOR",
                 role: "ROLEPLAY COACH",
                 icon: "elf.png", 
-                desc: "Devi affrontare un colloquio interno o dare un feedback difficile? L'Elfo simula la conversazione con te (Roleplay) per allenarti a trovare le parole giuste.",
+                desc: "Facing an internal interview or giving tough feedback? The Elf simulates the conversation with you (Roleplay) to help you find the right words.",
                 stats: [40, 20, 50, 100],
                 color: "rgba(74, 222, 128, 0.6)",
-                monsterName: "IL BLOCCO DELL'ORATORE",
+                monsterName: "SPEAKER'S BLOCK",
                 monsterIcon: "💬",
                 move: "CONFIDENCE BOOST",
-                log: "L'Elfo simula la domanda più temuta. Ti suggerisce una risposta strutturata (metodo STAR). Sei pronto!"
+                log: "The Elf simulates the dreaded question. Suggests a structured answer (STAR method). You are ready!"
             }
         };
 
@@ -513,7 +513,7 @@
             document.getElementById('next-btn').classList.add('hidden');
 
             // 1. Monster Appears
-            typeWriter(`Zally è nei guai! ${hero.monsterName} attacca!`, 'battle-log', () => {
+            typeWriter(`Zally is in trouble! ${hero.monsterName} attacks!`, 'battle-log', () => {
                 // 2. Hero Enters (Delay)
                 setTimeout(() => {
                     const iconEl = document.getElementById('battle-hero-icon');
