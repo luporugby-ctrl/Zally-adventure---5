@@ -218,11 +218,11 @@
                         <div class="text-4xl mb-2 text-center hidden">⚔️</div>
                         <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-yellow-400">THE EXECUTOR</div>
                     </button>
-                    <!-- Hero 2: Valkyrie -->
+                    <!-- Hero 2: Valkyrie (NOW PROCESS ALLY) -->
                     <button onclick="selectHero('valkyrie')" onmouseenter="previewHero('valkyrie')" class="hero-btn group border-4 border-gray-600 hover:border-cyan-400 p-4 bg-gray-900 focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
                         <img src="valchiria.png" alt="Valkyrie" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
                         <div class="text-4xl mb-2 text-center hidden">🛡️</div>
-                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-cyan-400">VALKYRIE</div>
+                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-cyan-400">PROCESS ALLY</div>
                     </button>
                     <!-- Hero 3: Wizard -->
                     <button onclick="selectHero('wizard')" onmouseenter="previewHero('wizard')" class="hero-btn group border-4 border-gray-600 hover:border-purple-400 p-4 bg-gray-900 focus:outline-none focus:border-purple-400 transition-colors cursor-pointer">
@@ -317,7 +317,7 @@
             <h3 class="font-arcade text-white text-lg mb-4">OPS UNFORESEEN</h3>
             <div class="font-term text-red-300 text-xl text-center max-w-md mb-8 space-y-2">
                 <p>Analyzing Warrior... <span class="text-red-600">K.O.</span></p>
-                <p>Analyzing Valkyrie... <span class="text-red-600">K.O.</span></p>
+                <p>Analyzing Process Ally... <span class="text-red-600">K.O.</span></p>
                 <p>Analyzing Wizard... <span class="text-red-600">K.O.</span></p>
                 <p>Analyzing Elf... <span class="text-red-600">K.O.</span></p>
                 <p class="blink mt-4">PRESETS FAILED!</p>
@@ -373,16 +373,16 @@
                 log: "The Executor analyzes the ticket image. Cross-references with the Process SOP. Output: 'Escalate to Level 2'. Problem solved!"
             },
             valkyrie: {
-                name: "THE KEEPER",
-                role: "SOP ALIGNMENT",
+                name: "THE PROCESS ALLY",
+                role: "CONTINUOUS IMPROVEMENT",
                 icon: "valchiria.png", 
-                desc: "The Process Captains' ally. Uses a shared Gem to keep SOPs aligned and ensure the whole team follows the same 'Single Source of Truth'.",
-                stats: [50, 30, 100, 60],
+                desc: "The ultimate sidekick for Process Captains. This Shared Gem scans current workflows to spot gaps, suggest smarter shortcuts, and drive Continuous Improvement.",
+                stats: [50, 60, 90, 70], // Increased Tech/Soft stats slightly for "improvement" logic
                 color: "rgba(75, 192, 192, 0.6)",
-                monsterName: "THE OBSOLETE PROCESS",
-                monsterIcon: "🕸️",
-                move: "ALIGNMENT BEAM",
-                log: "The Valkyrie consults the shared Knowledge Base. Finds the updated procedure (V2.0). The team is aligned!"
+                monsterName: "THE BOTTLENECK",
+                monsterIcon: "🐌",
+                move: "OPTIMIZATION BEAM",
+                log: "The Process Ally reviews the workflow. It spots a manual step that slows us down! Recommendation: 'Streamline with a Gem'. Process upgraded!"
             },
             wizard: {
                 name: "EXCEL COACH",
@@ -406,7 +406,7 @@
                 monsterName: "SPEAKER'S BLOCK",
                 monsterIcon: "💬",
                 move: "CONFIDENCE BOOST",
-                log: "The Elf simulates the dreaded question. Suggests a structured answer (STAR method). You are ready!"
+                log: "The Elf simulates the dreaded question. Suggests a structured answer. You are ready!"
             }
         };
 
