@@ -139,7 +139,7 @@
         <!-- STATE 1: START SCREEN -->
         <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
             <img src="zally-warrior.png" alt="Zally" class="w-32 h-32 md:w-48 md:h-48 object-contain mb-4 pixelated animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <!-- Diamond fits fantasy theme well -->
+            <!-- CHANGED: From Alien to Diamond -->
             <div class="text-6xl md:text-8xl mb-4 hidden">💎</div>
 
             <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-zalando">HEROES</span></h1>
@@ -372,7 +372,8 @@
                 stats: [90, 40, 80, 20],
                 color: "rgba(255, 206, 86, 0.6)",
                 monsterName: "THE BLOCKED TICKET",
-                monsterIcon: "locker.png", // UPDATED: locker.png
+                monsterIcon: "locker.png", // Image
+                fallbackIcon: "🔒",        // Fallback Emoji
                 move: "SOP STRIKE",
                 log: "The Executor analyzes the ticket image. Cross-references with the Process SOP. Output: 'Escalate to Level 2'. Problem solved!"
             },
@@ -384,7 +385,8 @@
                 stats: [50, 60, 90, 70], 
                 color: "rgba(75, 192, 192, 0.6)",
                 monsterName: "THE BOTTLENECK",
-                monsterIcon: "hourglass.png", // UPDATED: hourglass.png
+                monsterIcon: "hourglass.png", // Image
+                fallbackIcon: "⏳",          // Fallback Emoji
                 move: "OPTIMIZATION BEAM",
                 log: "Process Captain Ally reviews the workflow and spots a manual step slowing us down. With the support of the Shared Gem (Super Expert), it resolves the bottleneck!"
             },
@@ -396,7 +398,8 @@
                 stats: [30, 100, 80, 20],
                 color: "rgba(153, 102, 255, 0.6)",
                 monsterName: "THE CONFUSING REPORT",
-                monsterIcon: "sheet.png", // UPDATED: sheet.png (parchment)
+                monsterIcon: "sheet.png", // Image
+                fallbackIcon: "📜",       // Fallback Emoji
                 move: "KNOWLEDGE TRANSFER",
                 log: "The Wizard analyzes the file. Explains the Pivot logic and teaches you a better formula. Skill Up complete!"
             },
@@ -408,7 +411,8 @@
                 stats: [40, 20, 50, 100],
                 color: "rgba(74, 222, 128, 0.6)",
                 monsterName: "SPEAKER'S BLOCK",
-                monsterIcon: "cloud.png", // UPDATED: cloud.png
+                monsterIcon: "cloud.png", // Image
+                fallbackIcon: "☁️",       // Fallback Emoji
                 move: "CONFIDENCE BOOST",
                 log: "The Elf simulates the dreaded question. Suggests a structured answer. You are ready!"
             }
@@ -531,16 +535,19 @@
             document.getElementById('battle-log').innerText = "";
             document.getElementById('monster-name').innerText = hero.monsterName;
             
+            const monsterIconContainer = document.getElementById('monster-icon-container');
+            const monsterIcon = document.getElementById('monster-icon');
+
             // Logic for Monster Icon (Image vs Text)
-            const monsterIconContainer = document.getElementById('monster-icon');
+            // We use the container for layout and the inner div/img for content
             if (hero.monsterIcon.includes('.')) {
                 // If it's an image file
-                monsterIconContainer.innerHTML = `<img src="${hero.monsterIcon}" class="w-32 h-32 object-contain mx-auto pixelated animate-pulse" alt="${hero.monsterName}" onerror="this.onerror=null; this.parentNode.innerHTML='👾';">`;
-                monsterIconContainer.className = "flex justify-center items-center"; // Reset/set alignment
+                // Use fallbackIcon in the onerror handler
+                monsterIcon.innerHTML = `<img src="${hero.monsterIcon}" class="w-32 h-32 object-contain mx-auto pixelated animate-pulse" alt="${hero.monsterName}" onerror="this.onerror=null; this.parentNode.innerHTML='${hero.fallbackIcon}'; this.parentNode.className='text-6xl md:text-8xl';">`;
             } else {
-                // Fallback for text/emoji
-                monsterIconContainer.innerText = hero.monsterIcon;
-                monsterIconContainer.className = "text-6xl md:text-8xl"; 
+                // Fallback for text/emoji direct use
+                monsterIcon.innerText = hero.monsterIcon;
+                monsterIcon.className = "text-6xl md:text-8xl"; 
             }
             
             const actionContainer = document.getElementById('hero-action-container');
