@@ -139,7 +139,8 @@
         <!-- STATE 1: START SCREEN -->
         <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
             <img src="zally-warrior.png" alt="Zally" class="w-32 h-32 md:w-48 md:h-48 object-contain mb-4 pixelated animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <div class="text-6xl md:text-8xl mb-4 hidden">👾</div>
+            <!-- Diamond fits fantasy theme well -->
+            <div class="text-6xl md:text-8xl mb-4 hidden">💎</div>
 
             <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-zalando">HEROES</span></h1>
             
@@ -285,7 +286,10 @@
                     </div>
                     <div class="font-arcade text-xl text-red-500">VS</div>
                     <div class="text-center">
-                        <div id="monster-icon" class="text-6xl md:text-8xl">📄</div>
+                        <!-- Monster Icon Container -->
+                        <div id="monster-icon-container" class="flex justify-center items-center h-32 w-32">
+                            <div id="monster-icon" class="text-6xl md:text-8xl">📄</div>
+                        </div>
                         <div id="monster-name" class="font-arcade text-xs mt-2 text-red-400">BLANK PAGE</div>
                     </div>
                 </div>
@@ -312,7 +316,7 @@
             <h2 class="font-arcade text-red-500 text-center text-xl md:text-3xl mb-8 glitch-text">⚠️ WARNING: NEW CHALLENGER ⚠️</h2>
             
             <img src="monster.png" alt="Boss" class="w-48 h-48 md:w-64 md:h-64 object-contain mb-8 shake pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <div class="text-8xl md:text-9xl mb-8 shake hidden">👾</div>
+            <div class="text-8xl md:text-9xl mb-8 shake hidden">💀</div>
 
             <h3 class="font-arcade text-white text-lg mb-4">OPS UNFORESEEN</h3>
             <div class="font-term text-red-300 text-xl text-center max-w-md mb-8 space-y-2">
@@ -368,7 +372,7 @@
                 stats: [90, 40, 80, 20],
                 color: "rgba(255, 206, 86, 0.6)",
                 monsterName: "THE BLOCKED TICKET",
-                monsterIcon: "🎫",
+                monsterIcon: "locker.png", // UPDATED: locker.png
                 move: "SOP STRIKE",
                 log: "The Executor analyzes the ticket image. Cross-references with the Process SOP. Output: 'Escalate to Level 2'. Problem solved!"
             },
@@ -377,10 +381,10 @@
                 role: "CONTINUOUS IMPROVEMENT",
                 icon: "valchiria.png", 
                 desc: "The ultimate sidekick for Process Captains. This Shared Gem scans current workflows to spot gaps, suggest smarter shortcuts, and drive Continuous Improvement.",
-                stats: [50, 60, 90, 70], // Increased Tech/Soft stats slightly for "improvement" logic
+                stats: [50, 60, 90, 70], 
                 color: "rgba(75, 192, 192, 0.6)",
                 monsterName: "THE BOTTLENECK",
-                monsterIcon: "🐌",
+                monsterIcon: "hourglass.png", // UPDATED: hourglass.png
                 move: "OPTIMIZATION BEAM",
                 log: "Process Captain Ally reviews the workflow and spots a manual step slowing us down. With the support of the Shared Gem (Super Expert), it resolves the bottleneck!"
             },
@@ -392,7 +396,7 @@
                 stats: [30, 100, 80, 20],
                 color: "rgba(153, 102, 255, 0.6)",
                 monsterName: "THE CONFUSING REPORT",
-                monsterIcon: "📊",
+                monsterIcon: "sheet.png", // UPDATED: sheet.png (parchment)
                 move: "KNOWLEDGE TRANSFER",
                 log: "The Wizard analyzes the file. Explains the Pivot logic and teaches you a better formula. Skill Up complete!"
             },
@@ -404,7 +408,7 @@
                 stats: [40, 20, 50, 100],
                 color: "rgba(74, 222, 128, 0.6)",
                 monsterName: "SPEAKER'S BLOCK",
-                monsterIcon: "💬",
+                monsterIcon: "cloud.png", // UPDATED: cloud.png
                 move: "CONFIDENCE BOOST",
                 log: "The Elf simulates the dreaded question. Suggests a structured answer. You are ready!"
             }
@@ -462,14 +466,11 @@
         }
 
         function startGame() {
-            // New Flow: Start -> Tutorial
             showScreen('tutorial-view');
         }
 
         function enterSelection() {
-            // New Flow: Tutorial -> Select
             showScreen('select-view');
-            // Chart needs to be initialized/resized here because it was hidden
             setTimeout(() => {
                 if (!radarChart) {
                     initChart();
@@ -528,8 +529,19 @@
             showScreen('battle-view');
 
             document.getElementById('battle-log').innerText = "";
-            document.getElementById('monster-icon').innerText = hero.monsterIcon;
             document.getElementById('monster-name').innerText = hero.monsterName;
+            
+            // Logic for Monster Icon (Image vs Text)
+            const monsterIconContainer = document.getElementById('monster-icon');
+            if (hero.monsterIcon.includes('.')) {
+                // If it's an image file
+                monsterIconContainer.innerHTML = `<img src="${hero.monsterIcon}" class="w-32 h-32 object-contain mx-auto pixelated animate-pulse" alt="${hero.monsterName}" onerror="this.onerror=null; this.parentNode.innerHTML='👾';">`;
+                monsterIconContainer.className = "flex justify-center items-center"; // Reset/set alignment
+            } else {
+                // Fallback for text/emoji
+                monsterIconContainer.innerText = hero.monsterIcon;
+                monsterIconContainer.className = "text-6xl md:text-8xl"; 
+            }
             
             const actionContainer = document.getElementById('hero-action-container');
             actionContainer.classList.add('hidden');
