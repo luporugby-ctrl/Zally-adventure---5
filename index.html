@@ -111,6 +111,11 @@
             height: 100%;
         }
 
+        /* Monster Glow - Fix for dark icons on dark background */
+        .monster-glow {
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9)) brightness(1.2);
+        }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: #000; }
@@ -315,7 +320,7 @@
             <div class="absolute inset-0 bg-red-900 opacity-20 animate-pulse"></div>
             <h2 class="font-arcade text-red-500 text-center text-xl md:text-3xl mb-8 glitch-text">⚠️ WARNING: NEW CHALLENGER ⚠️</h2>
             
-            <img src="monster.png" alt="Boss" class="w-48 h-48 md:w-64 md:h-64 object-contain mb-8 shake pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <img src="monster.png" alt="Boss" class="w-48 h-48 md:w-64 md:h-64 object-contain mb-8 shake pixelated monster-glow" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
             <div class="text-8xl md:text-9xl mb-8 shake hidden">💀</div>
 
             <h3 class="font-arcade text-white text-lg mb-4">OPS UNFORESEEN</h3>
@@ -539,11 +544,10 @@
             const monsterIcon = document.getElementById('monster-icon');
 
             // Logic for Monster Icon (Image vs Text)
-            // We use the container for layout and the inner div/img for content
             if (hero.monsterIcon.includes('.')) {
                 // If it's an image file
-                // Use fallbackIcon in the onerror handler
-                monsterIcon.innerHTML = `<img src="${hero.monsterIcon}" class="w-32 h-32 object-contain mx-auto pixelated animate-pulse" alt="${hero.monsterName}" onerror="this.onerror=null; this.parentNode.innerHTML='${hero.fallbackIcon}'; this.parentNode.className='text-6xl md:text-8xl';">`;
+                // ADDED CLASS: 'monster-glow' to fix visibility on dark background
+                monsterIcon.innerHTML = `<img src="${hero.monsterIcon}" class="w-32 h-32 object-contain mx-auto pixelated animate-pulse monster-glow" alt="${hero.monsterName}" onerror="this.onerror=null; this.parentNode.innerHTML='${hero.fallbackIcon}'; this.parentNode.className='text-6xl md:text-8xl';">`;
             } else {
                 // Fallback for text/emoji direct use
                 monsterIcon.innerText = hero.monsterIcon;
