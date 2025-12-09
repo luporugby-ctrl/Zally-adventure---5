@@ -144,7 +144,6 @@
         <!-- STATE 1: START SCREEN -->
         <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
             <img src="zally-warrior.png" alt="Zally" class="w-32 h-32 md:w-48 md:h-48 object-contain mb-4 pixelated animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <!-- CHANGED: From Alien to Diamond -->
             <div class="text-6xl md:text-8xl mb-4 hidden">💎</div>
 
             <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-zalando">HEROES</span></h1>
@@ -390,7 +389,8 @@
                 stats: [50, 60, 90, 70], 
                 color: "rgba(75, 192, 192, 0.6)",
                 monsterName: "THE BOTTLENECK",
-                monsterIcon: "hourglass.png", // Image
+                // MODIFIED: Changed file name to 'glasshour.png' as requested
+                monsterIcon: "glasshour.png", // Image
                 fallbackIcon: "⏳",          // Fallback Emoji
                 move: "OPTIMIZATION BEAM",
                 log: "Process Captain Ally reviews the workflow and spots a manual step slowing us down. With the support of the Shared Gem (Super Expert), it resolves the bottleneck!"
