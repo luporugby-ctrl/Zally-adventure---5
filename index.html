@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zally's Gem Quest - Arcade Edition</title>
     
     <!-- Tailwind CSS -->
@@ -40,16 +40,37 @@
         body {
             background-color: #111;
             color: #eee;
-            overflow-x: hidden;
+            /* FULL SCREEN LOCK - No Page Scroll */
+            height: 100vh;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
         }
 
         .crt-container {
             background: radial-gradient(circle, #2a2a2a 0%, #000 100%);
-            min-height: 100vh;
+            width: 100%;
+            height: 100%;
+            max-width: 1024px; /* Max width for desktop */
+            max-height: 100vh; /* Never exceed screen height */
             position: relative;
             box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
-            border: 20px solid #1a1a1a;
-            border-radius: 20px;
+            /* Adaptive Border: Thinner on mobile/zoom to save space */
+            border: 5px solid #1a1a1a;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 768px) {
+            .crt-container {
+                height: 95vh; /* Slight gap on desktop */
+                border: 20px solid #1a1a1a;
+                border-radius: 20px;
+            }
         }
 
         /* Scanlines */
@@ -111,260 +132,260 @@
             height: 100%;
         }
 
-        /* Monster Glow - Fix for dark icons on dark background */
+        /* Monster Glow */
         .monster-glow {
             filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9)) brightness(1.2);
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 10px; }
+        /* Custom Scrollbar - Only for internal elements */
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #000; }
-        ::-webkit-scrollbar-thumb { background: #FF6900; border: 1px solid #FF6900; }
+        ::-webkit-scrollbar-thumb { background: #FF6900; border-radius: 3px; }
     </style>
 </head>
-<body class="crt-container flex flex-col items-center justify-center p-4">
+<body>
 
-    <!-- Scanline Overlay -->
-    <div class="scanlines"></div>
+    <div class="crt-container p-2 md:p-4">
+        <!-- Scanline Overlay -->
+        <div class="scanlines"></div>
 
-    <!-- UI: Header / Marquee -->
-    <header class="ui-layer w-full max-w-4xl flex justify-between items-end border-b-4 border-zalando pb-4 mb-6 relative">
-        <div class="text-left">
-            <h2 class="font-arcade text-yellow-400 text-xs md:text-sm mb-1">SCORE: <span id="score">00000</span></h2>
-            <h1 class="font-arcade text-zalando text-lg md:text-2xl tracking-tighter shadow-orange-glow">ZALLY'S GEM QUEST</h1>
-        </div>
-        <div class="text-right">
-            <div class="font-arcade text-cyan-400 text-xs md:text-sm animate-pulse">CREDITS: ADMIN MODE</div>
-        </div>
-    </header>
-
-    <!-- UI: Main Game Screen -->
-    <main id="game-screen" class="ui-layer w-full max-w-4xl bg-black border-4 border-gray-700 p-4 md:p-8 relative min-h-[600px] flex flex-col shadow-2xl">
-        
-        <!-- STATE 1: START SCREEN -->
-        <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-8">
-            <img src="zally-warrior.png" alt="Zally" class="w-32 h-32 md:w-48 md:h-48 object-contain mb-4 pixelated animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <div class="text-6xl md:text-8xl mb-4 hidden">💎</div>
-
-            <h1 class="font-arcade text-4xl md:text-5xl text-white mb-2 leading-tight">GEM<br><span class="text-zalando">HEROES</span></h1>
-            
-            <p class="font-term text-xl text-green-400 max-w-lg">
-                Zally needs help to navigate the Operational Chaos.<br>
-                Unlock the power of <span class="text-white font-bold">GEMS</span> to save the day!
-            </p>
-
-            <button onclick="startGame()" class="mt-8 px-8 py-4 bg-zalando hover:bg-zalando-light text-black font-arcade text-sm md:text-xl border-b-4 border-zalando-dark active:border-b-0 active:translate-y-1 transition-all blink font-bold cursor-pointer z-50">
-                INSERT COIN / START
-            </button>
-        </div>
-
-        <!-- STATE 1.5: GEM TUTORIAL (NEW) -->
-        <div id="tutorial-view" class="hidden flex-1 flex flex-col">
-            <h2 class="font-arcade text-center text-zalando mb-6 text-sm md:text-lg border-b-2 border-zalando pb-2">LEVEL 0: THE GEM ACADEMY</h2>
-            
-            <div class="flex-1 overflow-y-auto space-y-6 pr-2">
-                <!-- Concept Card -->
-                <div class="bg-gray-900 border border-green-500 p-4 shadow-lg">
-                    <h3 class="font-arcade text-green-400 text-sm mb-2">1. WHAT IS A GEM?</h3>
-                    <div class="flex gap-4">
-                        <div class="text-3xl">🎭</div>
-                        <p class="font-term text-lg text-gray-300">
-                            Think of a Gem as a <span class="text-white">custom mask</span> for Gemini. <br>
-                            Standard Gemini is a generalist (knows a bit of everything). 
-                            A <strong>Gem</strong> has a specific role, a tone of voice, and specific knowledge files. It never forgets its instructions.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Creation Card -->
-                <div class="bg-gray-900 border border-cyan-500 p-4 shadow-lg">
-                    <h3 class="font-arcade text-cyan-400 text-sm mb-2">2. HOW TO CREATE ONE</h3>
-                    <div class="font-term text-lg text-gray-300">
-                        <ol class="list-decimal list-inside space-y-1">
-                            <li>Go to <strong>Gem Manager</strong>.</li>
-                            <li>Click <span class="text-white">"New Gem"</span>.</li>
-                            <li><strong>Write Instructions:</strong> This is crucial! Tell it exactly how to behave (e.g., "Act as a Strict Editor").</li>
-                            <li><strong>Add Knowledge:</strong> Upload PDFs or Docs (SOPs, Guidelines) for it to reference.</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <!-- Why Card -->
-                <div class="bg-gray-900 border border-purple-500 p-4 shadow-lg">
-                    <h3 class="font-arcade text-purple-400 text-sm mb-2">3. WHY USE THEM?</h3>
-                    <div class="flex gap-4">
-                        <div class="text-3xl">⚡</div>
-                        <p class="font-term text-lg text-gray-300">
-                            <strong>Save Time:</strong> Don't repeat context every time.<br>
-                            <strong>Consistency:</strong> It always responds in the format/style you need.<br>
-                            <em>Example: "The Meeting Summarizer" always gives you a To-Do list.</em>
-                        </p>
-                    </div>
-                </div>
+        <!-- UI: Header / Marquee (Fixed Height) -->
+        <header class="ui-layer flex-shrink-0 w-full flex justify-between items-end border-b-4 border-zalando pb-2 mb-2 relative">
+            <div class="text-left">
+                <h2 class="font-arcade text-yellow-400 text-[10px] md:text-sm mb-1">SCORE: <span id="score">00000</span></h2>
+                <h1 class="font-arcade text-zalando text-sm md:text-2xl tracking-tighter shadow-orange-glow">ZALLY'S GEM QUEST</h1>
             </div>
+            <div class="text-right">
+                <div class="font-arcade text-cyan-400 text-[10px] md:text-xs animate-pulse">CREDITS: ADMIN</div>
+            </div>
+        </header>
 
-            <div class="mt-6 text-center">
-                <button onclick="enterSelection()" class="px-6 py-3 bg-green-600 hover:bg-green-500 text-white font-arcade text-sm border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all cursor-pointer">
-                    I'M READY TO CHOOSE MY HERO >>
+        <!-- UI: Main Game Screen (Flexible Height) -->
+        <!-- Added flex-1, min-h-0 to allow shrinking/growing without pushing page scroll -->
+        <main id="game-screen" class="ui-layer flex-1 min-h-0 w-full bg-black border-2 md:border-4 border-gray-700 p-2 md:p-6 relative flex flex-col shadow-2xl overflow-hidden">
+            
+            <!-- STATE 1: START SCREEN -->
+            <div id="start-view" class="flex-1 flex flex-col items-center justify-center text-center space-y-4 h-full overflow-y-auto">
+                <img src="zally-warrior.png" alt="Zally" class="w-24 h-24 md:w-40 md:h-40 object-contain mb-2 pixelated animate-bounce" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                <div class="text-6xl md:text-8xl mb-4 hidden">💎</div>
+
+                <h1 class="font-arcade text-2xl md:text-5xl text-white leading-tight">GEM<br><span class="text-zalando">HEROES</span></h1>
+                
+                <p class="font-term text-lg md:text-xl text-green-400 max-w-lg px-2">
+                    Zally needs help to navigate the Operational Chaos.<br>
+                    Unlock the power of <span class="text-white font-bold">GEMS</span>!
+                </p>
+
+                <button onclick="startGame()" class="mt-4 px-6 py-3 bg-zalando hover:bg-zalando-light text-black font-arcade text-xs md:text-xl border-b-4 border-zalando-dark active:border-b-0 active:translate-y-1 transition-all blink font-bold cursor-pointer z-50">
+                    INSERT COIN / START
                 </button>
             </div>
-        </div>
 
-        <!-- STATE 2: CHARACTER SELECT -->
-        <div id="select-view" class="hidden flex-1 flex flex-col">
-            <h2 class="font-arcade text-center text-white mb-6 text-sm md:text-lg">SELECT YOUR GEM HERO</h2>
-            
-            <div class="flex flex-col md:flex-row gap-6 flex-1">
-                <!-- Left: Hero Grid -->
-                <div class="md:w-1/2 grid grid-cols-2 gap-4 content-start">
-                    <!-- Hero 1: The Executor -->
-                    <button onclick="selectHero('warrior')" onmouseenter="previewHero('warrior')" class="hero-btn group border-4 border-gray-600 hover:border-yellow-400 p-4 bg-gray-900 focus:outline-none focus:border-yellow-400 transition-colors cursor-pointer">
-                        <img src="warrior.png" alt="Warrior" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <div class="text-4xl mb-2 text-center hidden">⚔️</div>
-                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-yellow-400">THE EXECUTOR</div>
-                    </button>
-                    <!-- Hero 2: Valkyrie (NOW PROCESS ALLY) -->
-                    <button onclick="selectHero('valkyrie')" onmouseenter="previewHero('valkyrie')" class="hero-btn group border-4 border-gray-600 hover:border-cyan-400 p-4 bg-gray-900 focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
-                        <img src="valchiria.png" alt="Valkyrie" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <div class="text-4xl mb-2 text-center hidden">🛡️</div>
-                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-cyan-400">PROCESS ALLY</div>
-                    </button>
-                    <!-- Hero 3: Wizard -->
-                    <button onclick="selectHero('wizard')" onmouseenter="previewHero('wizard')" class="hero-btn group border-4 border-gray-600 hover:border-purple-400 p-4 bg-gray-900 focus:outline-none focus:border-purple-400 transition-colors cursor-pointer">
-                        <img src="wizard.png" alt="Wizard" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <div class="text-4xl mb-2 text-center hidden">🧙‍♂️</div>
-                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-purple-400">WIZARD</div>
-                    </button>
-                    <!-- Hero 4: Elf -->
-                    <button onclick="selectHero('elf')" onmouseenter="previewHero('elf')" class="hero-btn group border-4 border-gray-600 hover:border-green-400 p-4 bg-gray-900 focus:outline-none focus:border-green-400 transition-colors cursor-pointer">
-                        <img src="elf.png" alt="Elf" class="w-10 h-10 md:w-12 md:h-12 mb-2 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                        <div class="text-4xl mb-2 text-center hidden">🧝</div>
-                        <div class="font-arcade text-xs text-center text-gray-400 group-hover:text-green-400">ELF</div>
-                    </button>
-                    <!-- 5th Slot -->
-                    <button id="slot-5" onclick="triggerBoss()" class="col-span-2 border-4 border-red-500 bg-red-900 p-4 animate-pulse cursor-pointer hover:bg-red-800 transition-colors">
-                        <div class="text-red-200 font-arcade text-xs text-center blink">⚠️ BOSS LEVEL ⚠️<br>(CLICK TO PLAY)</div>
-                    </button>
+            <!-- STATE 1.5: GEM TUTORIAL (Internal Scroll) -->
+            <div id="tutorial-view" class="hidden flex-1 flex flex-col h-full">
+                <h2 class="font-arcade text-center text-zalando mb-4 text-xs md:text-lg border-b-2 border-zalando pb-2 flex-shrink-0">LEVEL 0: THE GEM ACADEMY</h2>
+                
+                <div class="flex-1 overflow-y-auto space-y-4 pr-2">
+                    <!-- Concept Card -->
+                    <div class="bg-gray-900 border border-green-500 p-3 shadow-lg">
+                        <h3 class="font-arcade text-green-400 text-xs mb-1">1. WHAT IS A GEM?</h3>
+                        <div class="flex gap-2">
+                            <div class="text-2xl">🎭</div>
+                            <p class="font-term text-base md:text-lg text-gray-300">
+                                Think of a Gem as a <span class="text-white">custom mask</span> for Gemini. 
+                                A <strong>Gem</strong> has a specific role, tone, and knowledge.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Creation Card -->
+                    <div class="bg-gray-900 border border-cyan-500 p-3 shadow-lg">
+                        <h3 class="font-arcade text-cyan-400 text-xs mb-1">2. HOW TO CREATE ONE</h3>
+                        <div class="font-term text-base md:text-lg text-gray-300">
+                            <ol class="list-decimal list-inside space-y-1">
+                                <li>Go to <strong>Gem Manager</strong>.</li>
+                                <li>Click <span class="text-white">"New Gem"</span>.</li>
+                                <li><strong>Write Instructions:</strong> Tell it how to behave.</li>
+                                <li><strong>Add Knowledge:</strong> Upload PDFs/SOPs.</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <!-- Why Card -->
+                    <div class="bg-gray-900 border border-purple-500 p-3 shadow-lg">
+                        <h3 class="font-arcade text-purple-400 text-xs mb-1">3. WHY USE THEM?</h3>
+                        <div class="flex gap-2">
+                            <div class="text-2xl">⚡</div>
+                            <p class="font-term text-base md:text-lg text-gray-300">
+                                <strong>Save Time:</strong> Don't repeat context.<br>
+                                <strong>Consistency:</strong> Always the same format.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Right: Stats & Details -->
-                <div class="md:w-1/2 bg-gray-900 border-2 border-zalando p-4 flex flex-col">
-                    <div id="hero-display-name" class="font-arcade text-xl text-yellow-400 mb-2 border-b border-gray-700 pb-2">CHOOSE HERO</div>
-                    
-                    <div class="flex flex-row h-40 mb-4 gap-2">
-                        <div id="hero-image-container" class="w-1/2 border-2 border-gray-700 bg-black relative overflow-hidden flex justify-center items-center">
-                            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle, #333 1px, transparent 1px); background-size: 10px 10px;"></div>
-                            <img id="hero-large-img" src="" alt="Hero" class="h-full object-contain hidden pixelated z-10">
-                            <div id="hero-placeholder-text" class="font-arcade text-gray-600 text-[10px] text-center p-2 z-10 animate-pulse">
-                                HOVER HERO
+                <div class="mt-4 text-center flex-shrink-0">
+                    <button onclick="enterSelection()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white font-arcade text-xs border-b-4 border-green-800 active:border-b-0 active:translate-y-1 transition-all cursor-pointer">
+                        I'M READY TO CHOOSE MY HERO >>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STATE 2: CHARACTER SELECT -->
+            <div id="select-view" class="hidden flex-1 flex flex-col h-full">
+                <h2 class="font-arcade text-center text-white mb-4 text-xs md:text-lg flex-shrink-0">SELECT YOUR GEM HERO</h2>
+                
+                <div class="flex flex-col md:flex-row gap-4 flex-1 min-h-0">
+                    <!-- Left: Hero Grid (Scrollable on mobile) -->
+                    <div class="md:w-1/2 grid grid-cols-2 gap-2 content-start overflow-y-auto pr-1">
+                        <!-- Hero 1: The Executor -->
+                        <button onclick="selectHero('warrior')" onmouseenter="previewHero('warrior')" class="hero-btn group border-2 md:border-4 border-gray-600 hover:border-yellow-400 p-2 bg-gray-900 focus:outline-none focus:border-yellow-400 transition-colors cursor-pointer">
+                            <img src="warrior.png" alt="Warrior" class="w-8 h-8 md:w-12 md:h-12 mb-1 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                            <div class="text-2xl mb-1 text-center hidden">⚔️</div>
+                            <div class="font-arcade text-[10px] text-center text-gray-400 group-hover:text-yellow-400">THE EXECUTOR</div>
+                        </button>
+                        <!-- Hero 2: Valkyrie (Process Ally) -->
+                        <button onclick="selectHero('valkyrie')" onmouseenter="previewHero('valkyrie')" class="hero-btn group border-2 md:border-4 border-gray-600 hover:border-cyan-400 p-2 bg-gray-900 focus:outline-none focus:border-cyan-400 transition-colors cursor-pointer">
+                            <img src="valchiria.png" alt="Valkyrie" class="w-8 h-8 md:w-12 md:h-12 mb-1 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                            <div class="text-2xl mb-1 text-center hidden">🛡️</div>
+                            <div class="font-arcade text-[10px] text-center text-gray-400 group-hover:text-cyan-400">PROCESS ALLY</div>
+                        </button>
+                        <!-- Hero 3: Wizard -->
+                        <button onclick="selectHero('wizard')" onmouseenter="previewHero('wizard')" class="hero-btn group border-2 md:border-4 border-gray-600 hover:border-purple-400 p-2 bg-gray-900 focus:outline-none focus:border-purple-400 transition-colors cursor-pointer">
+                            <img src="wizard.png" alt="Wizard" class="w-8 h-8 md:w-12 md:h-12 mb-1 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                            <div class="text-2xl mb-1 text-center hidden">🧙‍♂️</div>
+                            <div class="font-arcade text-[10px] text-center text-gray-400 group-hover:text-purple-400">WIZARD</div>
+                        </button>
+                        <!-- Hero 4: Elf -->
+                        <button onclick="selectHero('elf')" onmouseenter="previewHero('elf')" class="hero-btn group border-2 md:border-4 border-gray-600 hover:border-green-400 p-2 bg-gray-900 focus:outline-none focus:border-green-400 transition-colors cursor-pointer">
+                            <img src="elf.png" alt="Elf" class="w-8 h-8 md:w-12 md:h-12 mb-1 mx-auto object-contain group-hover:scale-110 transition-transform pixelated" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                            <div class="text-2xl mb-1 text-center hidden">🧝</div>
+                            <div class="font-arcade text-[10px] text-center text-gray-400 group-hover:text-green-400">ELF</div>
+                        </button>
+                        <!-- 5th Slot -->
+                        <button id="slot-5" onclick="triggerBoss()" class="col-span-2 border-2 md:border-4 border-red-500 bg-red-900 p-2 animate-pulse cursor-pointer hover:bg-red-800 transition-colors">
+                            <div class="text-red-200 font-arcade text-[10px] text-center blink">⚠️ BOSS LEVEL ⚠️<br>(CLICK TO PLAY)</div>
+                        </button>
+                    </div>
+
+                    <!-- Right: Stats & Details (Scrollable) -->
+                    <div class="md:w-1/2 bg-gray-900 border-2 border-zalando p-3 flex flex-col min-h-0">
+                        <div id="hero-display-name" class="font-arcade text-sm md:text-xl text-yellow-400 mb-2 border-b border-gray-700 pb-1 flex-shrink-0">CHOOSE HERO</div>
+                        
+                        <div class="flex flex-row h-24 md:h-32 mb-2 gap-2 flex-shrink-0">
+                            <div id="hero-image-container" class="w-1/2 border-2 border-gray-700 bg-black relative overflow-hidden flex justify-center items-center">
+                                <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle, #333 1px, transparent 1px); background-size: 10px 10px;"></div>
+                                <img id="hero-large-img" src="" alt="Hero" class="h-full object-contain hidden pixelated z-10">
+                                <div id="hero-placeholder-text" class="font-arcade text-gray-600 text-[10px] text-center p-2 z-10 animate-pulse">
+                                    HOVER HERO
+                                </div>
+                            </div>
+                            <div class="w-1/2 chart-container relative border-2 border-gray-700 bg-black">
+                                <canvas id="heroRadarChart"></canvas>
                             </div>
                         </div>
-                        <div class="w-1/2 chart-container relative border-2 border-gray-700 bg-black">
-                            <canvas id="heroRadarChart"></canvas>
-                        </div>
-                    </div>
 
-                    <div class="flex-1 overflow-y-auto font-term text-lg leading-tight text-white">
-                        <p id="hero-desc">Hover over a hero to see details.</p>
-                        <div id="hero-special" class="mt-4 text-white font-bold hidden">
-                            GEM USE CASE: <span id="special-text" class="text-cyan-300"></span>
+                        <div class="flex-1 overflow-y-auto font-term text-base md:text-lg leading-tight text-white pr-1">
+                            <p id="hero-desc">Hover over a hero to see details.</p>
+                            <div id="hero-special" class="mt-2 text-white font-bold hidden">
+                                GEM USE CASE: <span id="special-text" class="text-cyan-300"></span>
+                            </div>
                         </div>
-                    </div>
 
-                    <button id="select-btn" class="mt-4 w-full bg-gray-700 text-gray-500 font-arcade py-3 cursor-not-allowed" disabled>
-                        SELECT HERO ABOVE
-                    </button>
+                        <button id="select-btn" class="mt-2 w-full bg-gray-700 text-gray-500 font-arcade py-2 md:py-3 text-xs flex-shrink-0 cursor-not-allowed" disabled>
+                            SELECT HERO ABOVE
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- STATE 3: SCENARIO / BATTLE -->
-        <div id="battle-view" class="hidden flex-1 flex flex-col justify-between">
-            <div class="flex-1 bg-gray-900 border-b-4 border-white mb-4 relative overflow-hidden p-6 flex flex-col items-center justify-center">
-                <div class="absolute top-4 left-4 font-arcade text-red-500 text-xs blink">WARNING: ERROR DETECTED</div>
+            <!-- STATE 3: SCENARIO / BATTLE -->
+            <div id="battle-view" class="hidden flex-1 flex flex-col h-full min-h-0">
+                <div class="flex-1 bg-gray-900 border-b-4 border-white mb-2 relative overflow-hidden p-2 flex flex-col items-center justify-center min-h-0">
+                    <div class="absolute top-2 left-2 font-arcade text-red-500 text-[10px] blink">WARNING: ERROR DETECTED</div>
+                    
+                    <div class="flex items-center gap-4 md:gap-8 mb-4">
+                        <div class="text-center">
+                            <img src="zally-warrior.png" alt="Zally" class="w-16 h-16 md:w-32 md:h-32 object-contain animate-bounce pixelated mx-auto" onerror="this.src='https://ui-avatars.com/api/?name=Zally&background=FF6900&color=000&size=128&bold=true'"> 
+                            <div class="font-arcade text-[10px] mt-1 text-white">ZALLY</div>
+                        </div>
+                        <div class="font-arcade text-lg md:text-xl text-red-500">VS</div>
+                        <div class="text-center">
+                            <!-- Monster Icon Container -->
+                            <div id="monster-icon-container" class="flex justify-center items-center h-20 w-20 md:h-32 md:w-32">
+                                <div id="monster-icon" class="text-4xl md:text-8xl">📄</div>
+                            </div>
+                            <div id="monster-name" class="font-arcade text-[10px] mt-1 text-red-400">BLANK PAGE</div>
+                        </div>
+                    </div>
+
+                    <div id="hero-action-container" class="hidden text-center transform transition-all duration-500 scale-0 absolute bottom-4 bg-black/80 p-2 border-2 border-zalando rounded">
+                        <div id="battle-hero-icon" class="mb-1 flex justify-center"></div>
+                        <div id="battle-move-name" class="font-arcade text-zalando text-xs md:text-xl">INSTANT DRAFT!</div>
+                    </div>
+                </div>
+
+                <div class="h-24 md:h-32 bg-blue-900 border-2 md:border-4 border-white p-2 md:p-4 font-term text-lg md:text-xl text-white overflow-y-auto flex-shrink-0">
+                    <p id="battle-log"></p>
+                    <div id="battle-cursor" class="inline-block w-2 h-4 bg-white blink align-bottom"></div>
+                </div>
+
+                <button onclick="returnToSelect()" id="next-btn" class="hidden mt-2 self-end text-yellow-400 font-arcade text-xs blink hover:text-white cursor-pointer z-50 flex-shrink-0">
+                    CONTINUE ▶
+                </button>
+            </div>
+
+            <!-- STATE 4: BOSS BATTLE -->
+            <div id="boss-view" class="hidden flex-1 flex flex-col items-center justify-center bg-black relative overflow-hidden h-full">
+                <div class="absolute inset-0 bg-red-900 opacity-20 animate-pulse"></div>
+                <h2 class="font-arcade text-red-500 text-center text-sm md:text-3xl mb-4 glitch-text">⚠️ WARNING: NEW CHALLENGER ⚠️</h2>
                 
-                <div class="flex items-center gap-8 mb-8">
-                    <div class="text-center">
-                        <img src="zally-warrior.png" alt="Zally" class="w-24 h-24 md:w-32 md:h-32 object-contain animate-bounce pixelated mx-auto" onerror="this.src='https://ui-avatars.com/api/?name=Zally&background=FF6900&color=000&size=128&bold=true'"> 
-                        <div class="font-arcade text-xs mt-2 text-white">ZALLY</div>
+                <img src="monster.png" alt="Boss" class="w-32 h-32 md:w-64 md:h-64 object-contain mb-4 shake pixelated monster-glow" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                <div class="text-6xl md:text-9xl mb-4 shake hidden">💀</div>
+
+                <h3 class="font-arcade text-white text-xs md:text-lg mb-2">OPS UNFORESEEN</h3>
+                <div class="font-term text-red-300 text-lg md:text-xl text-center max-w-md mb-4 space-y-1">
+                    <p>Analyzing Warrior... <span class="text-red-600">K.O.</span></p>
+                    <p>Analyzing Process Ally... <span class="text-red-600">K.O.</span></p>
+                    <p>Analyzing Wizard... <span class="text-red-600">K.O.</span></p>
+                    <p>Analyzing Elf... <span class="text-red-600">K.O.</span></p>
+                    <p class="blink mt-2">PRESETS FAILED!</p>
+                </div>
+                <button onclick="unlockCustom()" class="px-4 py-2 border-2 border-red-500 text-red-500 font-arcade text-xs hover:bg-red-900 hover:text-white transition-colors cursor-pointer z-50">
+                    SEARCHING SOLUTION...
+                </button>
+            </div>
+
+            <!-- STATE 5: CUSTOM HERO (VICTORY) -->
+            <div id="custom-view" class="hidden flex-1 flex flex-col items-center justify-center text-center h-full overflow-y-auto">
+                <div class="text-zalando text-4xl md:text-6xl mb-2 animate-spin-slow">✨</div>
+                <h1 class="font-arcade text-xl md:text-4xl text-white mb-2">UNLOCK NEW HERO</h1>
+                <div class="bg-gray-800 p-4 border-2 md:border-4 border-zalando max-w-lg mb-4">
+                    <h3 class="font-arcade text-green-400 text-xs mb-1">CLASS: CUSTOM CREATOR</h3>
+                    <p class="font-term text-lg text-gray-300 mb-2">
+                        No Preset knows your work like you do.<br>
+                        Create your hero. Train them on your unique challenges.<br>
+                        <span class="text-white font-bold">The possibilities are INFINITE.</span>
+                    </p>
+                </div>
+                <a href="https://gemini.google.com/" target="_blank" class="block w-full max-w-md mx-auto relative z-50">
+                    <div class="bg-zalando hover:bg-zalando-light text-black font-arcade py-4 px-4 border-b-4 md:border-b-8 border-zalando-dark active:border-b-0 active:translate-y-2 transition-all shadow-lg text-sm md:text-xl blink font-bold">
+                        👉 INSERT COIN TO CREATE GEM
                     </div>
-                    <div class="font-arcade text-xl text-red-500">VS</div>
-                    <div class="text-center">
-                        <!-- Monster Icon Container -->
-                        <div id="monster-icon-container" class="flex justify-center items-center h-32 w-32">
-                            <div id="monster-icon" class="text-6xl md:text-8xl">📄</div>
-                        </div>
-                        <div id="monster-name" class="font-arcade text-xs mt-2 text-red-400">BLANK PAGE</div>
-                    </div>
-                </div>
-
-                <div id="hero-action-container" class="hidden text-center transform transition-all duration-500 scale-0 absolute bottom-10 bg-black/80 p-4 border-2 border-zalando rounded">
-                    <div id="battle-hero-icon" class="mb-2 flex justify-center"></div>
-                    <div id="battle-move-name" class="font-arcade text-zalando text-lg md:text-xl">INSTANT DRAFT!</div>
-                </div>
+                </a>
+                <button onclick="resetGame()" class="mt-8 text-[10px] font-arcade text-gray-600 hover:text-white cursor-pointer z-50">
+                    RESET SYSTEM
+                </button>
             </div>
+        </main>
 
-            <div class="h-32 bg-blue-900 border-4 border-white p-4 font-term text-xl text-white overflow-hidden">
-                <p id="battle-log"></p>
-                <div id="battle-cursor" class="inline-block w-2 h-5 bg-white blink align-bottom"></div>
-            </div>
-
-            <button onclick="returnToSelect()" id="next-btn" class="hidden mt-4 self-end text-yellow-400 font-arcade text-xs blink hover:text-white cursor-pointer z-50">
-                CONTINUE ▶
-            </button>
-        </div>
-
-        <!-- STATE 4: BOSS BATTLE (GLITCH) -->
-        <div id="boss-view" class="hidden flex-1 flex flex-col items-center justify-center bg-black relative overflow-hidden">
-            <div class="absolute inset-0 bg-red-900 opacity-20 animate-pulse"></div>
-            <h2 class="font-arcade text-red-500 text-center text-xl md:text-3xl mb-8 glitch-text">⚠️ WARNING: NEW CHALLENGER ⚠️</h2>
-            
-            <img src="monster.png" alt="Boss" class="w-48 h-48 md:w-64 md:h-64 object-contain mb-8 shake pixelated monster-glow" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <div class="text-8xl md:text-9xl mb-8 shake hidden">💀</div>
-
-            <h3 class="font-arcade text-white text-lg mb-4">OPS UNFORESEEN</h3>
-            <div class="font-term text-red-300 text-xl text-center max-w-md mb-8 space-y-2">
-                <p>Analyzing Warrior... <span class="text-red-600">K.O.</span></p>
-                <p>Analyzing Process Ally... <span class="text-red-600">K.O.</span></p>
-                <p>Analyzing Wizard... <span class="text-red-600">K.O.</span></p>
-                <p>Analyzing Elf... <span class="text-red-600">K.O.</span></p>
-                <p class="blink mt-4">PRESETS FAILED!</p>
-            </div>
-            <button onclick="unlockCustom()" class="px-6 py-3 border-2 border-red-500 text-red-500 font-arcade hover:bg-red-900 hover:text-white transition-colors cursor-pointer z-50">
-                SEARCHING SOLUTION...
-            </button>
-        </div>
-
-        <!-- STATE 5: CUSTOM HERO (VICTORY) -->
-        <div id="custom-view" class="hidden flex-1 flex flex-col items-center justify-center text-center">
-            <div class="text-zalando text-6xl mb-4 animate-spin-slow">✨</div>
-            <h1 class="font-arcade text-3xl md:text-4xl text-white mb-4">UNLOCK NEW HERO</h1>
-            <div class="bg-gray-800 p-6 border-4 border-zalando max-w-lg mb-8">
-                <h3 class="font-arcade text-green-400 mb-2">CLASS: CUSTOM CREATOR</h3>
-                <p class="font-term text-xl text-gray-300 mb-4">
-                    No Preset knows your work like you do.<br>
-                    Create your hero. Train them on your unique challenges.<br>
-                    Bard? Merchant? Paladin?<br>
-                    <span class="text-white font-bold">The possibilities are INFINITE.</span>
-                </p>
-            </div>
-            <a href="https://gemini.google.com/" target="_blank" class="block w-full max-w-md mx-auto relative z-50">
-                <div class="bg-zalando hover:bg-zalando-light text-black font-arcade py-6 px-4 border-b-8 border-zalando-dark active:border-b-0 active:translate-y-2 transition-all shadow-lg text-lg md:text-xl blink font-bold">
-                    👉 INSERT COIN TO CREATE GEM
-                </div>
-            </a>
-            <p class="mt-4 font-term text-gray-500">Press to start your custom adventure</p>
-            <button onclick="resetGame()" class="mt-12 text-xs font-arcade text-gray-600 hover:text-white cursor-pointer z-50">
-                RESET SYSTEM
-            </button>
-        </div>
-    </main>
-
-    <div class="mt-8 text-gray-600 font-arcade text-xs text-center">
-        ZALANDO OPERATIONS - ARCADE DIVISION 198X
+        <!-- UI: Footer (Fixed Height) -->
+        <footer class="ui-layer mt-2 text-gray-600 font-arcade text-[8px] md:text-xs text-center flex-shrink-0">
+            ZALANDO OPERATIONS - ARCADE DIVISION 198X
+        </footer>
     </div>
 
-    <!-- Game Logic -->
+    <!-- Game Logic (Unchanged from previous functional version) -->
     <script>
         // --- DATA ---
         const heroes = {
@@ -389,7 +410,7 @@
                 stats: [50, 60, 90, 70], 
                 color: "rgba(75, 192, 192, 0.6)",
                 monsterName: "THE BOTTLENECK",
-                // MODIFIED: Changed file name to 'glasshour.png' as requested
+                // CORRECTED FILE NAME HERE
                 monsterIcon: "glasshour.png", // Image
                 fallbackIcon: "⏳",          // Fallback Emoji
                 move: "OPTIMIZATION BEAM",
@@ -470,7 +491,13 @@
 
         // --- NAVIGATION LOGIC ---
         function showScreen(screenId) {
-            document.querySelectorAll('main > div').forEach(div => div.classList.add('hidden'));
+            // Hide all direct children of main that are views
+            const views = ['start-view', 'tutorial-view', 'select-view', 'battle-view', 'boss-view', 'custom-view'];
+            views.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.classList.add('hidden');
+            });
+            
             document.getElementById(screenId).classList.remove('hidden');
         }
 
@@ -480,6 +507,7 @@
 
         function enterSelection() {
             showScreen('select-view');
+            // Small delay to allow layout to settle before rendering chart
             setTimeout(() => {
                 if (!radarChart) {
                     initChart();
@@ -545,13 +573,10 @@
 
             // Logic for Monster Icon (Image vs Text)
             if (hero.monsterIcon.includes('.')) {
-                // If it's an image file
-                // ADDED CLASS: 'monster-glow' to fix visibility on dark background
-                monsterIcon.innerHTML = `<img src="${hero.monsterIcon}" class="w-32 h-32 object-contain mx-auto pixelated animate-pulse monster-glow" alt="${hero.monsterName}" onerror="this.onerror=null; this.parentNode.innerHTML='${hero.fallbackIcon}'; this.parentNode.className='text-6xl md:text-8xl';">`;
+                monsterIcon.innerHTML = `<img src="${hero.monsterIcon}" class="w-24 h-24 md:w-32 md:h-32 object-contain mx-auto pixelated animate-pulse monster-glow" alt="${hero.monsterName}" onerror="this.onerror=null; this.parentNode.innerHTML='${hero.fallbackIcon}'; this.parentNode.className='text-4xl md:text-8xl';">`;
             } else {
-                // Fallback for text/emoji direct use
                 monsterIcon.innerText = hero.monsterIcon;
-                monsterIcon.className = "text-6xl md:text-8xl"; 
+                monsterIcon.className = "text-4xl md:text-8xl"; 
             }
             
             const actionContainer = document.getElementById('hero-action-container');
@@ -565,11 +590,11 @@
                 setTimeout(() => {
                     const iconEl = document.getElementById('battle-hero-icon');
                     if (hero.icon.includes('.')) {
-                        iconEl.innerHTML = `<img src="${hero.icon}" class="w-20 h-20 md:w-24 md:h-24 object-contain mx-auto pixelated animate-bounce">`;
-                        iconEl.className = "mb-2 flex justify-center";
+                        iconEl.innerHTML = `<img src="${hero.icon}" class="w-16 h-16 md:w-24 md:h-24 object-contain mx-auto pixelated animate-bounce">`;
+                        iconEl.className = "mb-1 flex justify-center";
                     } else {
                         iconEl.innerText = hero.icon;
-                        iconEl.className = "text-6xl mb-2 flex justify-center";
+                        iconEl.className = "text-6xl mb-1 flex justify-center";
                     }
 
                     document.getElementById('battle-move-name').innerText = hero.move;
